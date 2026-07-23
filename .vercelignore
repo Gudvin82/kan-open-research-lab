@@ -20,5 +20,5 @@ Dockerfile
 compose*.yaml
 scripts
 staticfiles
-public
+/public
 tmp

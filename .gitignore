@@ -23,7 +23,7 @@ staticfiles/*
 # Development-only browser tooling
 node_modules/
 .vercel/
-public/
+/public/
 
 # Local databases and runtime state
 *.sqlite3
