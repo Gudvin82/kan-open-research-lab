@@ -1,0 +1,61 @@
+name: Governance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    name: governance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Require project control documents
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s AGENTS.md
+          test -s .specify/memory/constitution.md
+          test -s docs/THREAT_MODEL.md
+
+      - name: Reject forbidden tracked paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden_pattern='(^|/)(\.env($|\.)|logs/|data/private/|datasets/private/|artifacts/|checkpoints/)'
+          if git ls-files | grep -E "${forbidden_pattern}"; then
+            echo "Forbidden private/runtime path is tracked."
+            exit 1
+          fi
+
+      - name: Reject common secret material
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -IlE 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|postgres(ql)?://[^[:space:]]+:[^[:space:]@]+@' -- .; then
+            echo "Potential secret material found in tracked files."
+            exit 1
+          fi
+
+      - name: Validate internal Markdown links
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r target; do
+            case "${target}" in
+              http://*|https://*|\#*|mailto:*|"") continue ;;
+            esac
+            path="${target%%#*}"
+            test -e "${path}" || {
+              echo "Missing Markdown target: ${target}"
+              exit 1
+            }
+          done < <(sed -nE 's/.*\]\(([^)]+)\).*/\1/p' README.md)
