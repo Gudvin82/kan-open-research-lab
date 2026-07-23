@@ -83,8 +83,10 @@ review before adoption.
 4. A minimal real Preview must be reviewed before feature completion, but
    linking a Vercel project or creating any external/paid resource requires
    separate explicit approval.
-5. Production deploy remains blocked until the external credential is rotated;
-   server availability does not clear that blocker.
+5. Legacy database access, worker integration and production deploy to the
+   research server remain blocked until the external credential is rotated.
+   This does not block a database-free Vercel Preview/public shell that never
+   receives or uses that credential.
 6. Managed PostgreSQL is not connected in this feature. ADR-0003 must compare
    providers and be approved before a later database connection.
 
@@ -156,7 +158,6 @@ The Node project exists only under development/CI for browser verification.
 
 ## Complexity Tracking
 
-No constitutional violation requires an exception. The browser-test toolchain
-is additional operational surface but is the smallest practical way to satisfy
-the explicit automated accessibility and responsive acceptance criteria; it is
-not shipped into the Python runtime.
+No constitutional violation requires an exception. The owner approved the
+pinned browser-test toolchain as development/CI-only surface; it must not ship
+in the Python container or Vercel runtime.

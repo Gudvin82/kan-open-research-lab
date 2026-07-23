@@ -23,7 +23,7 @@ planning checkpoint.
 - [ ] T009 [P] Implement shared page metadata and same-entity locale mapping in `src/public/context_processors.py`
 - [ ] T010 Create semantic base, skip link, header/navigation and footer templates in `src/public/templates/public/base.html` and `src/public/templates/public/partials/`
 - [ ] T011 Translate approved design tokens and responsive primitives into `src/public/static/public/css/site.css`
-- [ ] T012 [P] Vendor approved font files and license notices in `src/public/static/public/fonts/` only after license/performance review, or document the system-font fallback decision in `docs/DESIGN.md`
+- [ ] T012 [P] Verify Golos Text provenance, open-source license, Cyrillic/Latin coverage, required weights and size; vendor the approved variable WOFF2 and license in `src/public/static/public/fonts/` with a complete system fallback in `docs/DESIGN.md`
 - [ ] T013 Create the Django public app skeleton in `src/public/apps.py`, `src/public/urls.py`, `src/public/views.py`, and `src/public/__init__.py`, then make the foundational contracts in `tests/contract/test_public_routes.py` pass
 
 **Checkpoint:** Shared localized shell works without a database or worker.
@@ -133,6 +133,8 @@ keyboard only, reduced motion and automated WCAG scans.
   component from US3.
 - US5 validates the combined shell and follows US1–US4.
 - T049 is an explicit authority gate. T050 cannot start without it.
+- The current implementation authorization stops after T048; T049–T050 remain
+  intentionally unstarted.
 - No task connects PostgreSQL, changes the server or integrates the ML worker.
 
 ## Parallel opportunities

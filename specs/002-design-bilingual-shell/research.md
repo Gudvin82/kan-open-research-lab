@@ -59,10 +59,11 @@ reduces failure modes and makes scientific wording reviewable in the PR.
 ## Decision 4 — CSS token system with resilient typography
 
 **Decision:** Translate `docs/DESIGN.md` into CSS custom properties and a small
-component vocabulary. Use a warm-paper palette, editorial serif headings,
-neutral sans body text and mono metadata. The system-font fallback must remain
-fully usable. Any bundled font requires an OFL/license file and performance
-review.
+component vocabulary. Use locally hosted Golos Text as the primary candidate,
+preferably as one variable WOFF2 family with Cyrillic and Latin support. Verify
+the upstream provenance, open-source license, required weights and file size
+before adding it; preserve the license in the repository. External font CDNs
+are forbidden and the system-font fallback must remain fully usable.
 
 **Rationale:** Tokens make the design auditable and reusable without importing a
 component framework. Font failure is an explicit edge case.
@@ -77,10 +78,12 @@ component framework. Font failure is an explicit edge case.
 ## Decision 5 — Playwright plus axe for browser evidence
 
 **Decision:** Add pinned `@playwright/test` and `@axe-core/playwright`
-development dependencies. Use browser tests for bilingual journeys, keyboard
-behavior, 320 px overflow and screenshot review. Scan all five primary pages in
-both locales for critical/serious automatically detectable issues, then perform
-manual keyboard, zoom, landmarks and reduced-motion review.
+development/CI dependencies, explicitly approved by the owner. Keep Node,
+Chromium and Playwright out of the production Python container and Vercel
+runtime. Use browser tests for bilingual journeys, keyboard behavior, 320 px
+overflow and screenshot review. Scan all five primary pages in both locales for
+critical/serious automatically detectable issues, then perform manual keyboard,
+zoom, landmarks and reduced-motion review.
 
 **Rationale:** pytest can validate routes and HTML contracts, but not layout,
 focus behavior or rendered accessibility. Playwright's official guidance

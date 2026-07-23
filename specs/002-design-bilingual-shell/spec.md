@@ -251,8 +251,9 @@ with reduced motion enabled.
 
 - `KAN Open Research Lab` remains the working public name until the owner
   approves a final name and domain.
-- Public contact email and optional legal/analytics links are omitted until
-  explicitly supplied and approved.
+- Public contact email, legal links, cookie banner, privacy policy and analytics
+  are omitted until real data or functionality requires them. The footer
+  exposes only the project GitHub link as a public contact destination.
 - Shell content is curated demonstration copy stored without introducing
   publication, knowledge-graph or experiment database models in this feature.
 - Russian is the source language. English demonstration copy is human-reviewed
@@ -262,6 +263,9 @@ with reduced motion enabled.
 - The research server is currently reachable, but the worker remains
   disconnected until a separate worker-integration specification and credential
   rotation are complete.
+- The external credential blocks legacy database access, worker integration and
+  production deployment to the research server. It does not block a
+  database-free Vercel Preview/public shell that never receives or uses it.
 - Managed PostgreSQL selection, database connection and migrations are deferred
   behind an ADR and separate owner approval.
 - A minimal real Preview is required before feature completion, but this

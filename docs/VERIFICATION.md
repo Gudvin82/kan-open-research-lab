@@ -80,4 +80,6 @@ approved linking step.
 - A plaintext database credential was found only in an external workspace
   `CLAUDE.md`. Its value was not copied to this repository, Git history, logs,
   issues or PRs. Rotation remains a mandatory blocker for connecting to that
-  legacy database and for every production deployment to the research server.
+  legacy database, worker integration and every production deployment to the
+  research server. It does not block a database-free Vercel Preview or public
+  shell when the credential is neither used nor supplied to Vercel.
