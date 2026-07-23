@@ -17,14 +17,14 @@ planning checkpoint.
 ## Phase 2: Foundational — blocks all user stories
 
 - [x] T005 Write failing shared route, landmark and database-independence contracts in `tests/contract/test_public_routes.py`
-- [x] T006 Configure `src.public`, `LocaleMiddleware`, RU/EN settings, locale paths and context processors in `src/config/settings/base.py`
-- [x] T007 Configure `/` and locale-prefixed named routes in `src/config/urls.py` and `src/public/urls.py`
-- [x] T008 [P] Define immutable localized page, research, status, evidence, reproducibility, explanation and method fixtures in `src/public/content.py`
-- [x] T009 [P] Implement shared page metadata and same-entity locale mapping in `src/public/context_processors.py`
-- [x] T010 Create semantic base, skip link, header/navigation and footer templates in `src/public/templates/public/base.html` and `src/public/templates/public/partials/`
-- [x] T011 Translate approved design tokens and responsive primitives into `src/public/static/public/css/site.css`
-- [x] T012 [P] Verify Golos Text provenance, open-source license, Cyrillic/Latin coverage, required weights and size; vendor the approved variable WOFF2 and license in `src/public/static/public/fonts/` with a complete system fallback in `docs/DESIGN.md`
-- [x] T013 Create the Django public app skeleton in `src/public/apps.py`, `src/public/urls.py`, `src/public/views.py`, and `src/public/__init__.py`, then make the foundational contracts in `tests/contract/test_public_routes.py` pass
+- [x] T006 Configure `src.webapp`, `LocaleMiddleware`, RU/EN settings, locale paths and context processors in `src/config/settings/base.py`
+- [x] T007 Configure `/` and locale-prefixed named routes in `src/config/urls.py` and `src/webapp/urls.py`
+- [x] T008 [P] Define immutable localized page, research, status, evidence, reproducibility, explanation and method fixtures in `src/webapp/content.py`
+- [x] T009 [P] Implement shared page metadata and same-entity locale mapping in `src/webapp/context_processors.py`
+- [x] T010 Create semantic base, skip link, header/navigation and footer templates in `src/webapp/templates/lab/base.html` and `src/webapp/templates/lab/partials/`
+- [x] T011 Translate approved design tokens and responsive primitives into `src/webapp/static/public/css/site.css`
+- [x] T012 [P] Verify Golos Text provenance, open-source license, Cyrillic/Latin coverage, required weights and size; vendor the approved variable WOFF2 and license in `src/webapp/static/public/fonts/` with a complete system fallback in `docs/DESIGN.md`
+- [x] T013 Create the Django public app skeleton in `src/webapp/apps.py`, `src/webapp/urls.py`, `src/webapp/views.py`, and `src/webapp/__init__.py`, then make the foundational contracts in `tests/contract/test_public_routes.py` pass
 
 **Checkpoint:** Shared localized shell works without a database or worker.
 
@@ -38,10 +38,10 @@ navigation with JavaScript disabled.
 
 - [x] T014 [P] [US1] Write failing locale, root-default, counterpart and unsupported-locale tests in `tests/contract/test_locale_contract.py`
 - [x] T015 [P] [US1] Write failing no-script bilingual browser journey in `tests/ui/navigation.spec.ts`
-- [x] T016 [US1] Implement localized home, Research, Methods, Knowledge Base and About views in `src/public/views.py`
-- [x] T017 [US1] Implement localized primary templates in `src/public/templates/public/pages/`
-- [x] T018 [US1] Implement same-entity RU/EN controls and optional non-overriding language preference in `src/public/templates/public/partials/language_switch.html` and `src/public/views.py`
-- [x] T019 [US1] Add `lang`, canonical, `hreflang`, localized title and description output in `src/public/templates/public/base.html`
+- [x] T016 [US1] Implement localized home, Research, Methods, Knowledge Base and About views in `src/webapp/views.py`
+- [x] T017 [US1] Implement localized primary templates in `src/webapp/templates/lab/pages/`
+- [x] T018 [US1] Implement same-entity RU/EN controls and optional non-overriding language preference in `src/webapp/templates/lab/partials/language_switch.html` and `src/webapp/views.py`
+- [x] T019 [US1] Add `lang`, canonical, `hreflang`, localized title and description output in `src/webapp/templates/lab/base.html`
 - [x] T020 [US1] Make `tests/contract/test_locale_contract.py` and the US1 browser journey pass
 
 **Checkpoint:** User Story 1 is independently usable in both locales.
@@ -56,9 +56,9 @@ with styles disabled.
 
 - [x] T021 [P] [US2] Write failing research collection, disclaimer and card-field tests in `tests/integration/test_public_content.py`
 - [x] T022 [P] [US2] Write failing accessible-name research checks in `tests/ui/accessibility.spec.ts`
-- [x] T023 [US2] Add reviewed RU/EN demonstration research fixtures to `src/public/content.py`
-- [x] T024 [US2] Implement separate research collections and open-problem disclaimer in `src/public/templates/public/pages/research.html`
-- [x] T025 [US2] Implement text-complete research cards and status explanations in `src/public/templates/public/partials/research_card.html`
+- [x] T023 [US2] Add reviewed RU/EN demonstration research fixtures to `src/webapp/content.py`
+- [x] T024 [US2] Implement separate research collections and open-problem disclaimer in `src/webapp/templates/lab/pages/research.html`
+- [x] T025 [US2] Implement text-complete research cards and status explanations in `src/webapp/templates/lab/partials/research_card.html`
 - [x] T026 [US2] Make research content and accessible-name tests pass without claim-language exceptions
 
 **Checkpoint:** User Story 2 passes with CSS disabled and color removed.
@@ -73,8 +73,8 @@ disabled and confirm stable topic/section identity.
 
 - [x] T027 [P] [US3] Write failing level completeness, unavailable-state and stable-anchor tests in `tests/integration/test_public_content.py`
 - [x] T028 [P] [US3] Write failing no-script and keyboard level journey in `tests/ui/navigation.spec.ts`
-- [x] T029 [US3] Implement explanation-level fixtures and validation in `src/public/content.py`
-- [x] T030 [US3] Implement link-based level navigation and explicit availability in `src/public/templates/public/partials/explanation_levels.html`
+- [x] T029 [US3] Implement explanation-level fixtures and validation in `src/webapp/content.py`
+- [x] T030 [US3] Implement link-based level navigation and explicit availability in `src/webapp/templates/lab/partials/explanation_levels.html`
 - [x] T031 [US3] Make explanation integration and browser tests pass
 
 **Checkpoint:** User Story 3 works with zero client-side scripting.
@@ -89,9 +89,9 @@ every route has useful bounded copy or an honest empty state.
 
 - [x] T032 [P] [US4] Write failing method-route and neutral-copy tests in `tests/contract/test_public_routes.py`
 - [x] T033 [P] [US4] Write failing header/footer link coverage in `tests/ui/navigation.spec.ts`
-- [x] T034 [US4] Add reviewed neutral KAN, MLP, PINN and comparison summaries to `src/public/content.py`
-- [x] T035 [US4] Implement method index/detail and useful empty-state templates in `src/public/templates/public/pages/methods.html` and `src/public/templates/public/pages/method_detail.html`
-- [x] T036 [US4] Complete mission, grouped navigation, GitHub, language and disclaimer footer content in `src/public/templates/public/partials/footer.html`
+- [x] T034 [US4] Add reviewed neutral KAN, MLP, PINN and comparison summaries to `src/webapp/content.py`
+- [x] T035 [US4] Implement method index/detail and useful empty-state templates in `src/webapp/templates/lab/pages/methods.html` and `src/webapp/templates/lab/pages/method_detail.html`
+- [x] T036 [US4] Complete mission, grouped navigation, GitHub, language and disclaimer footer content in `src/webapp/templates/lab/partials/footer.html`
 - [x] T037 [US4] Make method and navigation coverage pass in RU and EN and assert that unapproved contact, legal, cookie and analytics links are absent
 
 **Checkpoint:** User Story 4 establishes the complete public information shell.
@@ -106,7 +106,7 @@ keyboard only, reduced motion and automated WCAG scans.
 
 - [x] T038 [P] [US5] Write failing axe scans for five RU and five EN primary pages in `tests/ui/accessibility.spec.ts`
 - [x] T039 [P] [US5] Write failing 320 px overflow, long-label and desktop checks in `tests/ui/responsive.spec.ts`
-- [x] T040 [US5] Refine landmarks, focus, touch targets, contrast, high-contrast and reduced-motion CSS in `src/public/templates/public/` and `src/public/static/public/css/site.css`
+- [x] T040 [US5] Refine landmarks, focus, touch targets, contrast, high-contrast and reduced-motion CSS in `src/webapp/templates/lab/` and `src/webapp/static/public/css/site.css`
 - [x] T041 [US5] Make axe scans pass with no critical/serious violations and without broad rule exclusions
 - [x] T042 [US5] Make responsive journeys pass without page-level horizontal overflow
 - [x] T043 [US5] Complete manual keyboard, 200% zoom, screen-reader landmarks, forced-colors and reduced-motion review in `specs/002-design-bilingual-shell/checklists/ux-accessibility.md`

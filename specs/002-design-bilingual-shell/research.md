@@ -2,7 +2,7 @@
 
 ## Decision 1 — Server-rendered Django, not a separate frontend
 
-**Decision:** Extend the modular Django monolith with a `src.public` app,
+**Decision:** Extend the modular Django monolith with a `src.webapp` app,
 templates and namespaced CSS. Use progressive enhancement only where it
 preserves a fully functional link-based fallback.
 

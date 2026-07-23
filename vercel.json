@@ -6,7 +6,6 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 30,
-      "includeFiles": "src/public/**",
       "excludeFiles": "{.agents/**,.env*,.github/**,.pytest_cache/**,.specify/**,AGENTS.md,Dockerfile,artifacts/**,compose*.yaml,docs/**,node_modules/**,package*.json,playwright.config.ts,research_engine/**,scripts/**,specs/**,tests/**,tmp/**}"
     }
   },

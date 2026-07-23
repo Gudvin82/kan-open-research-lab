@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-handler404 = "src.public.views.not_found"
+handler404 = "src.webapp.views.not_found"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -12,6 +12,6 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
-    path("", include("src.public.urls")),
+    path("", include("src.webapp.urls")),
     prefix_default_language=True,
 )

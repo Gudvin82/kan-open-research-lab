@@ -1,4 +1,4 @@
-{% extends "public/base.html" %}
+{% extends "lab/base.html" %}
 {% block content %}
   <section class="hero">
     <div class="shell hero-grid">
@@ -61,7 +61,7 @@
     </div>
     <div class="research-list">
       {% for card in featured_cards %}
-        {% include "public/partials/research_card.html" %}
+        {% include "lab/partials/research_card.html" %}
       {% endfor %}
     </div>
   </section>

@@ -1,6 +1,6 @@
-{% extends "public/base.html" %}
+{% extends "lab/base.html" %}
 {% block content %}
-  {% include "public/partials/page_intro.html" %}
+  {% include "lab/partials/page_intro.html" %}
   <aside class="shell proof-note">
     <span aria-hidden="true">!</span>
     <p>{{ ui.scientific_disclaimer }}</p>
@@ -13,7 +13,7 @@
     </header>
     <div class="research-list">
       {% for card in reproduced_cards %}
-        {% include "public/partials/research_card.html" %}
+        {% include "lab/partials/research_card.html" %}
       {% endfor %}
     </div>
   </section>
@@ -26,7 +26,7 @@
       </header>
       <div class="research-list">
         {% for card in open_cards %}
-          {% include "public/partials/research_card.html" %}
+          {% include "lab/partials/research_card.html" %}
         {% endfor %}
       </div>
     </div>

@@ -120,7 +120,7 @@ src/
 ├── config/
 │   ├── settings/base.py
 │   └── urls.py
-└── public/
+└── webapp/
     ├── apps.py
     ├── content.py
     ├── context_processors.py
@@ -129,7 +129,7 @@ src/
     ├── static/public/
     │   ├── css/site.css
     │   └── fonts/
-    └── templates/public/
+    └── templates/lab/
         ├── base.html
         ├── partials/
         └── pages/
@@ -151,7 +151,7 @@ package-lock.json
 playwright.config.ts
 ```
 
-**Structure Decision**: Add one `src.public` Django app inside the existing
+**Structure Decision**: Add one `src.webapp` Django app inside the existing
 monolith. Keep content, routes, templates and namespaced static assets together.
 Do not create a frontend application, API, database models or worker coupling.
 The Node project exists only under development/CI for browser verification.

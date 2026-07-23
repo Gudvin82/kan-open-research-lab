@@ -11,7 +11,6 @@ def test_vercel_configuration_is_scoped_and_migration_free():
     assert "collectstatic" in config["buildCommand"]
     assert list(config["functions"]) == ["api/index.py"]
     assert config["functions"]["api/index.py"]["maxDuration"] == 30
-    assert config["functions"]["api/index.py"]["includeFiles"] == "src/public/**"
     assert config["rewrites"] == [
         {"source": "/(.*)", "destination": "/api/index"}
     ]

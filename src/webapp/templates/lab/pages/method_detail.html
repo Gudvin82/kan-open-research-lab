@@ -1,7 +1,7 @@
-{% extends "public/base.html" %}
+{% extends "lab/base.html" %}
 {% block content %}
   <article data-performance-claim="none">
-    {% include "public/partials/page_intro.html" %}
+    {% include "lab/partials/page_intro.html" %}
     <section class="shell method-boundary">
       <div>
         <p class="eyebrow">{{ ui.what_supports }}</p>
@@ -13,7 +13,7 @@
       </div>
     </section>
     <div class="shell levels-layout">
-      {% include "public/partials/explanation_levels.html" %}
+      {% include "lab/partials/explanation_levels.html" %}
     </div>
   </article>
 {% endblock %}

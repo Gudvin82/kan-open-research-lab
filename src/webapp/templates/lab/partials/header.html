@@ -4,7 +4,7 @@
       <span class="wordmark-mark" aria-hidden="true">K</span>
       <span>{{ ui.site_short }}</span>
     </a>
-    {% include "public/partials/language_switch.html" %}
+    {% include "lab/partials/language_switch.html" %}
     <nav aria-label="{{ ui.primary_nav }}" class="primary-nav">
       <a href="{% url 'public:home' %}"{% if nav_key == "home" %} aria-current="page"{% endif %}>{{ ui.home }}</a>
       <a href="{% url 'public:research' %}"{% if nav_key == "research" %} aria-current="page"{% endif %}>{{ ui.research }}</a>

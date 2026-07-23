@@ -31,7 +31,7 @@ def home(request: HttpRequest) -> HttpResponse:
             "featured_cards": RESEARCH[locale][:2],
         }
     )
-    return render(request, "public/pages/home.html", context)
+    return render(request, "lab/pages/home.html", context)
 
 
 @require_GET  # type: ignore[untyped-decorator]
@@ -47,14 +47,14 @@ def research(request: HttpRequest) -> HttpResponse:
             "open_cards": tuple(card for card in cards if card.collection == "open"),
         }
     )
-    return render(request, "public/pages/research.html", context)
+    return render(request, "lab/pages/research.html", context)
 
 
 @require_GET  # type: ignore[untyped-decorator]
 def methods(request: HttpRequest) -> HttpResponse:
     return render(
         request,
-        "public/pages/methods.html",
+        "lab/pages/methods.html",
         _base_context(request, "methods"),
     )
 
@@ -74,7 +74,7 @@ def method_detail(request: HttpRequest, method: str) -> HttpResponse:
     )
     return render(
         request,
-        "public/pages/method_detail.html",
+        "lab/pages/method_detail.html",
         {
             "page": page,
             "nav_key": "methods",
@@ -88,7 +88,7 @@ def method_detail(request: HttpRequest, method: str) -> HttpResponse:
 def knowledge(request: HttpRequest) -> HttpResponse:
     return render(
         request,
-        "public/pages/knowledge.html",
+        "lab/pages/knowledge.html",
         _base_context(request, "knowledge"),
     )
 
@@ -97,7 +97,7 @@ def knowledge(request: HttpRequest) -> HttpResponse:
 def about(request: HttpRequest) -> HttpResponse:
     return render(
         request,
-        "public/pages/about.html",
+        "lab/pages/about.html",
         _base_context(request, "about"),
     )
 
@@ -114,7 +114,7 @@ def not_found(request: HttpRequest, exception: Exception) -> HttpResponse:
     )
     return render(
         request,
-        "public/pages/404.html",
+        "lab/pages/404.html",
         {
             "page": page,
             "nav_key": "",

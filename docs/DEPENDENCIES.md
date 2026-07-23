@@ -27,4 +27,4 @@ Alexandra Korolkova and Vitaly Kuzmin as designers, Paratype as the 2019
 releaser, and licenses the font under SIL Open Font License 1.1.
 
 The exact source revision, conversion command, file size and checksum are
-recorded beside the font in `src/public/static/public/fonts/README.md`.
+recorded beside the font in `src/webapp/static/public/fonts/README.md`.
