@@ -1,0 +1,12 @@
+{% extends "public/base.html" %}
+{% block content %}
+  {% include "public/partials/page_intro.html" %}
+  <section class="shell empty-state">
+    <span class="empty-glyph" aria-hidden="true">∴</span>
+    <div>
+      <p class="eyebrow">{{ ui.no_publications }}</p>
+      <h2>{% if locale == "ru" %}Не пустая страница, а обещание структуры{% else %}Not an empty page, but a structural promise{% endif %}</h2>
+      <p>{% if locale == "ru" %}Здесь появятся проверенные разборы источников, глоссарий, формулы с текстовым описанием и воспроизводимые учебные примеры. До review материал не помечается как готовый.{% else %}This area will contain reviewed source notes, a glossary, equations with text alternatives and reproducible educational examples. Material is not marked ready before review.{% endif %}</p>
+    </div>
+  </section>
+{% endblock %}

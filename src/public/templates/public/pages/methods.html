@@ -1,0 +1,21 @@
+{% extends "public/base.html" %}
+{% block content %}
+  {% include "public/partials/page_intro.html" %}
+  <section class="shell method-directory" aria-label="{{ ui.methods }}">
+    {% for item in methods %}
+      <article class="method-row">
+        <div class="method-code">M—0{{ forloop.counter }}</div>
+        <div>
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.summary }}</p>
+        </div>
+        <a class="button button-quiet" href="{% url 'public:method-detail' method=item.slug %}">{{ ui.method_more }}<span aria-hidden="true"> ↗</span></a>
+      </article>
+    {% endfor %}
+  </section>
+  <section class="shell comparison-note">
+    <p class="eyebrow">{% if locale == "ru" %}Правило сравнения{% else %}Comparison rule{% endif %}</p>
+    <h2>{% if locale == "ru" %}KAN не оценивается в вакууме.{% else %}KAN is not evaluated in isolation.{% endif %}</h2>
+    <p>{% if locale == "ru" %}Минимум: MLP сопоставимой сложности и уместный классический или символический метод. Метрики определяются до результата.{% else %}At minimum: a complexity-aware MLP and an appropriate classical or symbolic method. Metrics are fixed before results are seen.{% endif %}</p>
+  </section>
+{% endblock %}

@@ -1,0 +1,23 @@
+<article class="research-card" data-research-card>
+  <div class="card-index" aria-hidden="true">0{{ forloop.counter }}</div>
+  <div>
+    <p class="card-status" data-field="scientific-status">{{ ui.status }} · {{ card.status }}</p>
+    <h3>{{ card.title }}</h3>
+    <p>{{ card.summary }}</p>
+  </div>
+  <dl class="evidence-grid">
+    <div>
+      <dt>{{ ui.method }}</dt>
+      <dd data-field="method">{{ card.method }}</dd>
+    </div>
+    <div>
+      <dt>{{ ui.evidence }}</dt>
+      <dd data-field="evidence-level">{{ card.evidence }}</dd>
+    </div>
+    <div>
+      <dt>{{ ui.reproducibility }}</dt>
+      <dd data-field="reproducibility">{{ card.reproducibility }}</dd>
+    </div>
+  </dl>
+  <p class="claim-boundary">{{ card.boundary }}</p>
+</article>

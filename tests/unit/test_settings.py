@@ -93,3 +93,38 @@ def test_production_rejects_non_production_database_label():
     )
     assert result.returncode != 0
     assert "DATABASE_ENV=production" in result.stderr
+
+
+def test_production_without_database_serves_public_shell():
+    env = os.environ.copy()
+    env.update(
+        {
+            "DJANGO_SETTINGS_MODULE": "src.config.settings.production",
+            "DJANGO_SECRET_KEY": ("production-test-7f9a4d2c8e1b6a3f5d0c9e7b2a4f8d1c"),
+            "DJANGO_ALLOWED_HOSTS": "production.invalid",
+        }
+    )
+    env.pop("DATABASE_URL", None)
+    env.pop("DATABASE_ENV", None)
+    result = subprocess.run(  # noqa: S603
+        [
+            sys.executable,
+            "-c",
+            (
+                "import django, tempfile; django.setup(); "
+                "from django.conf import settings; "
+                "settings.STATIC_ROOT=tempfile.mkdtemp(); "
+                "from django.core.management import call_command; "
+                "call_command('collectstatic', verbosity=0, interactive=False); "
+                "from django.test import Client; c=Client(); "
+                "r=c.get('/ru/', HTTP_HOST='production.invalid', secure=True); "
+                "assert r.status_code == 200; "
+                "assert b'compute_node_unavailable' in r.content"
+            ),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr

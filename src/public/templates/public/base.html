@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="{{ page.description }}">
+  <title>{{ page.title }} · {{ ui.site_name }}</title>
+  <link rel="canonical" href="{{ current_url }}">
+  <link rel="alternate" hreflang="ru" href="{{ ru_absolute_url }}">
+  <link rel="alternate" hreflang="en" href="{{ en_absolute_url }}">
+  <link rel="stylesheet" href="{% static 'public/css/site.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">{{ ui.skip }}</a>
+  {% include "public/partials/header.html" %}
+  <main id="main-content" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "public/partials/footer.html" %}
+</body>
+</html>

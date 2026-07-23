@@ -15,13 +15,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "src.public",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "src.public.middleware.LocalePreferenceMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -42,6 +45,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "src.public.context_processors.public_shell",
             ],
         },
     },
@@ -91,6 +95,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "ru"
+LANGUAGES = [
+    ("ru", "Русский"),
+    ("en", "English"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
+LANGUAGE_COOKIE_NAME = "kan_language"
+LANGUAGE_COOKIE_SAMESITE = "Lax"
+LANGUAGE_COOKIE_AGE = 365 * 24 * 60 * 60
 TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_TZ = True

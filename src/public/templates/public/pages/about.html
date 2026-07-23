@@ -1,0 +1,28 @@
+{% extends "public/base.html" %}
+{% block content %}
+  {% include "public/partials/page_intro.html" %}
+  <section class="shell manifesto-grid">
+    <article>
+      <span>01</span>
+      <h2>{% if locale == "ru" %}Честный статус{% else %}Honest status{% endif %}</h2>
+      <p>{% if locale == "ru" %}Эксперимент, гипотеза и доказательство — разные состояния, и интерфейс не смешивает их.{% else %}Experiment, hypothesis and proof are different states, and the interface does not blur them.{% endif %}</p>
+    </article>
+    <article>
+      <span>02</span>
+      <h2>{% if locale == "ru" %}Воспроизводимость{% else %}Reproducibility{% endif %}</h2>
+      <p>{% if locale == "ru" %}Публичный результат требует кода, окружения, конфигурации, seed, метрик и checksum артефактов.{% else %}A public result requires code, environment, configuration, seed, metrics and artifact checksums.{% endif %}</p>
+    </article>
+    <article>
+      <span>03</span>
+      <h2>{% if locale == "ru" %}Независимый web{% else %}Independent web{% endif %}</h2>
+      <p>{% if locale == "ru" %}Сайт читается без БД и worker. Вычислительный узел никогда не маскируется как доступный.{% else %}The site remains readable without a database or worker. Compute availability is never simulated.{% endif %}</p>
+    </article>
+  </section>
+  <section class="shell repository-callout">
+    <div>
+      <p class="eyebrow">OPEN SOURCE</p>
+      <h2>{% if locale == "ru" %}Спецификация рядом с кодом{% else %}Specification beside the code{% endif %}</h2>
+    </div>
+    <a class="button" href="https://github.com/Gudvin82/kan-open-research-lab">{{ ui.github }} <span aria-hidden="true">↗</span></a>
+  </section>
+{% endblock %}

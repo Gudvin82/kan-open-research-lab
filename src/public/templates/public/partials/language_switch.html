@@ -1,0 +1,5 @@
+<nav aria-label="{{ ui.language }}" class="language-switch">
+  <a href="{{ ru_url }}" hreflang="ru" lang="ru"{% if locale == "ru" %} aria-current="page"{% endif %}>{{ ui.russian }}</a>
+  <span aria-hidden="true">/</span>
+  <a href="{{ en_url }}" hreflang="en" lang="en"{% if locale == "en" %} aria-current="page"{% endif %}>{{ ui.english }}</a>
+</nav>
