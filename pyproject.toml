@@ -1,0 +1,53 @@
+[project]
+name = "kan-open-research-lab-web"
+version = "0.1.0"
+description = "Public web foundation for KAN Open Research Lab"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "django>=6.0,<6.1",
+  "gunicorn>=23,<24",
+  "psycopg[binary]>=3.2,<3.3",
+  "uvicorn>=0.35,<0.36",
+  "whitenoise>=6.9,<7",
+]
+
+[dependency-groups]
+dev = [
+  "mypy>=1.17,<2",
+  "pip-audit>=2.9,<3",
+  "pytest>=9.0.3,<10",
+  "pytest-django>=4.11,<5",
+  "ruff>=0.12,<0.13",
+]
+
+[tool.uv]
+package = false
+
+[tool.vercel]
+entrypoint = "src.config.asgi:application"
+
+[tool.vercel.scripts]
+build = "DJANGO_SETTINGS_MODULE=src.config.settings.build python manage.py collectstatic --noinput"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "src.config.settings.test"
+python_files = ["test_*.py"]
+addopts = "-q --strict-markers"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+extend-exclude = [".specify"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "S", "UP"]
+ignore = ["S101"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+exclude = ["tests/", "research_engine/"]
+
+[[tool.mypy.overrides]]
+module = ["django.*"]
+ignore_missing_imports = true

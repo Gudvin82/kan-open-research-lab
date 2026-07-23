@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Require project control documents
         shell: bash
@@ -31,7 +31,9 @@ jobs:
         run: |
           set -euo pipefail
           forbidden_pattern='(^|/)(\.env($|\.)|logs/|data/private/|datasets/private/|artifacts/|checkpoints/)'
-          if git ls-files | grep -E "${forbidden_pattern}"; then
+          if git ls-files \
+            | grep -E "${forbidden_pattern}" \
+            | grep -vE '(^|/)\.env\.example$'; then
             echo "Forbidden private/runtime path is tracked."
             exit 1
           fi
@@ -40,8 +42,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -IlE 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|postgres(ql)?://[^[:space:]]+:[^[:space:]@]+@' -- .; then
-            echo "Potential secret material found in tracked files."
+          if git grep -IlE 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY' -- .; then
+            echo "Private key material found in tracked files."
+            exit 1
+          fi
+          if git grep -IlE 'postgres(ql)?://[^[:space:]]+:[^[:space:]@]+@' \
+            -- . \
+            ':(exclude).env.example' \
+            ':(exclude).github/workflows/quality.yml' \
+            ':(exclude)compose.yaml' \
+            ':(exclude)tests/**'; then
+            echo "Potential database credential found outside approved examples."
             exit 1
           fi
 

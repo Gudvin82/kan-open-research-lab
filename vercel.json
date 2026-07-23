@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "functions": {
+    "src/config/asgi.py": {
+      "maxDuration": 30,
+      "excludeFiles": "{research_engine/**,tests/**,specs/**,docs/**}"
+    }
+  }
+}

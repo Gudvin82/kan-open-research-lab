@@ -1,0 +1,19 @@
+services:
+  worker:
+    build:
+      context: research_engine
+      dockerfile: Dockerfile
+    environment:
+      WORKER_MODE: skeleton
+    network_mode: none
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 4g
+    cpus: 4.0

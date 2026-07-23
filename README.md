@@ -3,8 +3,7 @@
 Предпроектная рабочая область открытой русскоязычной исследовательской и
 образовательной лаборатории KAN/MLP/PINN.
 
-Статус: **Этап 0 утверждён с архитектурными поправками**. Foundation начинается
-после merge PR с документами Этапа 0.
+Статус: **Этап 0 утверждён и влит; Foundation реализуется**.
 
 **Основной репозиторий:** <https://github.com/Gudvin82/kan-open-research-lab>
 
@@ -39,7 +38,8 @@ Protocols (VCP) используется как дополнительный л�
 
 - [constitution](.specify/memory/constitution.md);
 - [спецификация Этапа 0](specs/000-preproject-audit/spec.md);
-- [черновик спецификации Foundation](specs/001-foundation/spec.md);
+- [утверждённая спецификация Foundation](specs/001-foundation/spec.md);
+- [план и задачи Foundation](specs/001-foundation/plan.md);
 - [аудит репозиториев и протоколов](docs/REPOSITORY_AUDIT.md);
 - [исходный single-host ADR](docs/adr/0001-mvp-architecture.md);
 - [действующий hybrid deployment ADR](docs/adr/0002-hybrid-vercel-deployment.md);
@@ -58,6 +58,27 @@ Research worker, PyTorch и длительные эксперименты на V
 После восстановления сервера worker размещается отдельно. Пока вычислительный
 узел недоступен, публичный сайт продолжает работать, а research operations
 возвращают явный unavailable status.
+
+## Локальный запуск Foundation
+
+Требуются Homebrew, `uv`, Colima, Docker CLI и Compose plugin. Системный
+`/usr/bin/python3` 3.9.6 не используется.
+
+```bash
+cp .env.example .env
+colima start --cpu 4 --memory 6 --disk 40
+docker compose up --build --detach --wait
+./scripts/smoke-check.sh
+```
+
+Worker запускается отдельно и не влияет на доступность web:
+
+```bash
+docker compose -f compose.yaml -f compose.worker.yaml up --build --detach worker
+```
+
+Полные команды проверок и backup drill находятся в
+[Foundation quickstart](specs/001-foundation/quickstart.md).
 
 ## GitHub workflow
 

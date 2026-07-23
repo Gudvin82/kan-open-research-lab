@@ -40,3 +40,8 @@ checkpoints/
 .idea/
 .vscode/
 *.swp
+
+# Track the versioned Spec Kit skills, but no local agent state
+/.agents/*
+!/.agents/skills/
+!/.agents/skills/**
