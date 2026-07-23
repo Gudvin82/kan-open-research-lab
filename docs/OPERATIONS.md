@@ -39,6 +39,10 @@ and the project network. Operators must not use `down --volumes`,
 
 The credential reported in the external workspace `CLAUDE.md` is not present
 in this repository. It must be rotated before any connection to that legacy
-database or production deployment on the research server. Rotation must update
-the consuming service secret atomically and include a restart/health check;
-Foundation does not perform or automate it.
+database, production deployment on the research server, or worker integration.
+Rotation must update the consuming service secret atomically and include a
+restart/health check; Foundation does not perform or automate it.
+
+This blocker does not apply to a database-free Vercel Preview or public shell
+that neither uses nor receives that credential. Any legacy database, worker or
+research-server production connection remains forbidden until rotation.
