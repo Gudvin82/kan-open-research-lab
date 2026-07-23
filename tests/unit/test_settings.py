@@ -36,7 +36,11 @@ def test_preview_without_database_keeps_liveness_only():
             sys.executable,
             "-c",
             (
-                "import django; django.setup(); "
+                "import django, tempfile; django.setup(); "
+                "from django.conf import settings; "
+                "settings.STATIC_ROOT=tempfile.mkdtemp(); "
+                "from django.core.management import call_command; "
+                "call_command('collectstatic', verbosity=0, interactive=False); "
                 "from django.test import Client; c=Client(); "
                 "assert c.get('/health/live/', "
                 "HTTP_HOST='preview.vercel.app', secure=True).status_code == 200; "
