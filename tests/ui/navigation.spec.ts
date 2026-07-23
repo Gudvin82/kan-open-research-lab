@@ -12,7 +12,13 @@ for (const [russianPath, englishPath] of pages) {
   test(`language switch preserves ${russianPath || "home"}`, async ({
     page,
   }) => {
-    await page.context().setExtraHTTPHeaders({ "Accept-Language": "en" });
+    const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+    await page.context().setExtraHTTPHeaders({
+      "Accept-Language": "en",
+      ...(protectionBypass
+        ? { "x-vercel-protection-bypass": protectionBypass }
+        : {}),
+    });
     await page.goto(`/ru/${russianPath}`);
     await page
       .getByRole("banner")
@@ -26,7 +32,13 @@ for (const [russianPath, englishPath] of pages) {
 test("core navigation and explanation levels work without JavaScript", async ({
   browser,
 }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+  const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    extraHTTPHeaders: protectionBypass
+      ? { "x-vercel-protection-bypass": protectionBypass }
+      : undefined,
+  });
   const page = await context.newPage();
 
   await page.goto("/ru/methods/kan/");

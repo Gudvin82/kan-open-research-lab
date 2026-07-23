@@ -1,6 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:8001";
+const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+const extraHTTPHeaders = protectionBypass
+  ? { "x-vercel-protection-bypass": protectionBypass }
+  : undefined;
 
 export default defineConfig({
   testDir: "./tests/ui",
@@ -15,7 +19,8 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   use: {
     baseURL,
-    trace: "retain-on-failure",
+    extraHTTPHeaders,
+    trace: protectionBypass ? "off" : "retain-on-failure",
     screenshot: "only-on-failure",
     video: "off",
   },

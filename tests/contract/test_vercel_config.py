@@ -11,9 +11,7 @@ def test_vercel_configuration_is_scoped_and_migration_free():
     assert "collectstatic" in config["buildCommand"]
     assert list(config["functions"]) == ["api/index.py"]
     assert config["functions"]["api/index.py"]["maxDuration"] == 30
-    assert config["rewrites"] == [
-        {"source": "/(.*)", "destination": "/api/index"}
-    ]
+    assert config["rewrites"] == [{"source": "/(.*)", "destination": "/api/index"}]
 
     pyproject = tomllib.loads(Path("pyproject.toml").read_text())
     vercel = pyproject["tool"]["vercel"]
