@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:17.5-alpine@sha256:6567bca8d7bc8c82c5922425a0baee57be8402df92bae5eacad5f01ae9544daa
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kan_local}
+      POSTGRES_USER: ${POSTGRES_USER:-kan_local_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-only}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 1.0
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DJANGO_SETTINGS_MODULE: src.config.settings.development
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-unsafe-local-only}
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kan_local_app}:${POSTGRES_PASSWORD:-local-only}@db:5432/${POSTGRES_DB:-kan_local}
+      DATABASE_ENV: local
+    command:
+      - /bin/sh
+      - -c
+      - python manage.py migrate --noinput && exec gunicorn src.config.asgi:application --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers 2 --access-logfile -
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready/', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 512m
+    cpus: 1.0
+
+volumes:
+  postgres_data:

@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: KAN Lab Foundation Operational API
+  version: 0.1.0
+paths:
+  /health/live/:
+    get:
+      operationId: liveness
+      responses:
+        "200":
+          description: Web process is alive independent of DB and worker.
+  /health/ready/:
+    get:
+      operationId: readiness
+      responses:
+        "200":
+          description: Database is reachable.
+        "503":
+          description: Database unavailable; details intentionally hidden.
+  /api/v1/system/compute-status/:
+    get:
+      operationId: computeStatus
+      responses:
+        "503":
+          description: Foundation has no connected compute node.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unavailable"
+components:
+  schemas:
+    Unavailable:
+      type: object
+      additionalProperties: false
+      required: [status, code, checked_at]
+      properties:
+        status:
+          const: unavailable
+        code:
+          enum: [database_unavailable, compute_node_unavailable]
+        checked_at:
+          type: string
+          format: date-time

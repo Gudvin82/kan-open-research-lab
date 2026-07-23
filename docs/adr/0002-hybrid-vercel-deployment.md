@@ -104,6 +104,17 @@ Vercel resource limits относятся только к web function. ML impor
 work запрещены в web lock и deployment bundle. Для server worker сохраняется
 budget ADR-0001: один job, до 3.5–4 ГБ RAM, до 5 CPU и disk watermark 10 ГБ.
 
+Foundation measurement на Colima (4 CPU, 6 GiB VM) после стабилизации:
+
+| Service | Idle CPU sample | RAM | PID | Container limit |
+|---|---:|---:|---:|---:|
+| web | 0.64–0.81% | 105.1 MiB | 5 | 512 MiB, 1 CPU, 256 PID |
+| PostgreSQL | 0.06–2.22% | 19.2–22.4 MiB | 6 | 1 GiB, 1 CPU, 256 PID |
+| worker skeleton | 0.06% | 8.8 MiB | 1 | 4 GiB, 4 CPU, 256 PID |
+
+Это idle baseline, а не capacity benchmark. Worker limit 4 CPU соответствует
+локальной VM и остаётся ниже server budget 5 CPU.
+
 ## Последствия
 
 Плюсы: web не зависит от research server, PR получают isolated Preview,
