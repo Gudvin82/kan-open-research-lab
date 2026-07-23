@@ -3,7 +3,8 @@
 Предпроектная рабочая область открытой русскоязычной исследовательской и
 образовательной лаборатории KAN/MLP/PINN.
 
-Статус: **Этап 0 — предпроектный аудит**. Реализация платформы ещё не начата.
+Статус: **Этап 0 утверждён с архитектурными поправками**. Foundation начинается
+после merge PR с документами Этапа 0.
 
 **Основной репозиторий:** <https://github.com/Gudvin82/kan-open-research-lab>
 
@@ -40,16 +41,23 @@ Protocols (VCP) используется как дополнительный л�
 - [спецификация Этапа 0](specs/000-preproject-audit/spec.md);
 - [черновик спецификации Foundation](specs/001-foundation/spec.md);
 - [аудит репозиториев и протоколов](docs/REPOSITORY_AUDIT.md);
-- [ADR архитектуры MVP](docs/adr/0001-mvp-architecture.md);
+- [исходный single-host ADR](docs/adr/0001-mvp-architecture.md);
+- [действующий hybrid deployment ADR](docs/adr/0002-hybrid-vercel-deployment.md);
 - [модель угроз](docs/THREAT_MODEL.md);
 - [направление дизайн-системы](docs/DESIGN.md);
 - [концептуальная модель данных](docs/DATA_MODEL.md).
 
 ## Текущий режим
 
-Локальная разработка на Mac. Проверка 23 июля 2026 года показала: TCP/22
-целевого сервера доступен, но SSH зависает до banner; HTTP не отвечает.
-Развёртывание и любые изменения сервера отложены до восстановления доступа.
+Локальная разработка выполняется на Mac через `uv` и Colima. Публичный Django
+web/admin проектируется для Vercel; Preview создаются из PR, production — только
+из защищённой `main`. PostgreSQL будет внешним управляемым сервисом, но его
+production provisioning запрещён без отдельного подтверждения владельца.
+
+Research worker, PyTorch и длительные эксперименты на Vercel не выполняются.
+После восстановления сервера worker размещается отдельно. Пока вычислительный
+узел недоступен, публичный сайт продолжает работать, а research operations
+возвращают явный unavailable status.
 
 ## GitHub workflow
 
@@ -68,3 +76,5 @@ Protocols (VCP) используется как дополнительный л�
 - лицензии кода, текстов и данных;
 - политика аналитики/cookie;
 - внешнее backup-хранилище и сроки хранения артефактов.
+- конкретный managed PostgreSQL и object storage;
+- production Vercel project и любые платные ресурсы.

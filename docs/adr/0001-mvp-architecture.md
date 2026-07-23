@@ -1,6 +1,6 @@
 # ADR-0001: архитектура MVP
 
-**Статус:** proposed
+**Статус:** superseded by ADR-0002
 **Дата:** 2026-07-23
 
 ## Контекст
@@ -76,3 +76,9 @@ runner потребует подписанного import protocol.
 Foundation должен измерить cold start, idle RAM, DB RAM, response latency и
 поведение web при 4 ГБ worker load. Изменение budget или добавление сервиса
 требует нового ADR.
+
+## Замена решения
+
+После решения владельца использовать Vercel single-host deployment больше не
+является целевой production-архитектурой. Сохранённые здесь ограничения worker
+и server resource budget остаются входными данными для ADR-0002.

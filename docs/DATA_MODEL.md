@@ -63,11 +63,21 @@ attempt/event, не переписывая предыдущий результа
 
 ## Разделение доступа
 
-- Web-role: контент CRUD, enqueue allowlisted definition, read summaries.
+- Web-role: content CRUD, enqueue allowlisted definition, read summaries; без
+  worker result mutation и DB administration.
 - Worker-role: claim/heartbeat, write metrics/logs/artifact metadata; без user,
   session, publication или secret tables.
+- Publisher-role: переносит только reviewed artifacts в public object storage.
+- Preview-role: отдельная disposable DB/branch без production data и credentials.
 - Public serializer: явный allowlist; исключает internal path, raw log,
   credentials и private artifacts.
+
+## Compute node availability
+
+`ComputeNode`/эквивалентная operational entity хранит node ID, status,
+capabilities, last heartbeat и sanitized reason. Это не очередь и не даёт
+публичного execution API. При offline/stale node control plane возвращает
+typed `compute_node_unavailable`, сохраняя доступность read-only web.
 
 ## Вопросы до физической схемы
 

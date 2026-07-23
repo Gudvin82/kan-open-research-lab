@@ -6,8 +6,9 @@
 
 ## Executive summary
 
-Архитектура ТЗ реалистична для single-host CPU MVP при одном job и строгом
-resource budget. Главные риски: зрелость/застой KAN-реализаций, раздельная
+Single-host решение заменено ADR-0002: web/admin размещаются на Vercel,
+research worker — на отдельном server node, PostgreSQL — managed external.
+Главные риски: зрелость/застой KAN-реализаций, сетевые trust boundaries, раздельная
 совместимость Python окружений, собственная PostgreSQL queue, научный
 publication workflow и изоляция worker.
 
@@ -21,17 +22,19 @@ regression benchmark.
 | Проверка | Результат |
 |---|---|
 | Рабочая папка | большая общая dirty worktree; новый проект изолирован |
-| Python | 3.9.6 |
-| uv | установлен |
+| System Python | 3.9.6; запрещён для проекта |
+| uv | 0.11.7 |
+| uv Python | CPython 3.13.13 установлен |
 | Git | 2.54.0 |
 | Docker/Compose | не обнаружен |
+| Colima | не обнаружен; выбран владельцем |
 | psql | не обнаружен |
 | VCP local | clean, release v0.9.5, commit `7d8cd2b...` |
 | VCP remote | та же release v0.9.5, но remote branch новее local |
 
-Вывод: Этап 0 выполняется локально; для Foundation потребуется Docker
-Desktop/Colima либо отдельное решение PostgreSQL. Обновлять соседний VCP checkout
-ради этого проекта не нужно.
+Вывод: web Foundation использует uv-managed Python 3.13, local PostgreSQL —
+Colima + Docker Compose. Research Python выбирается позже. Обновлять соседний
+VCP checkout ради этого проекта не нужно.
 
 ### Security observation вне нового проекта
 
@@ -41,6 +44,10 @@ Desktop/Colima либо отдельное решение PostgreSQL. Обнов
 нужно считать credential скомпрометированным: ротировать на сервере, удалить из
 проектной памяти/истории доступным безопасным способом и выполнить secret scan.
 Сам файл и соседние проекты этим аудитом не изменялись.
+
+Ротация является blocking security action до production integration. Файл с
+credential не входит в новый repository; значение не переносится в issue, PR,
+logs, specs или project memory.
 
 ## Сервер
 
@@ -181,8 +188,12 @@ clean environment и validation patterns.
 - secrets, personal data, private datasets, internal logs и heavy artifacts
   исключены;
 - отдельные branches + Pull Request; deployable `main` защищён обязательным CI.
+- hybrid deployment по ADR-0002;
+- Colima для local containers;
+- Python 3.13 для web через `uv`;
+- никаких paid/prod Vercel, database или storage resources без approval.
 
-До Foundation критично: подтвердить архитектуру и выбрать локальный container
-runtime. До production остаются: финальное название, домен, email, legal
+До production остаются: ротация обнаруженного credential, финальное название,
+домен, email, legal
 owner/jurisdiction, code/content/data licenses, analytics, off-host backup и
-retention.
+retention, managed PostgreSQL/object storage providers и платный budget.

@@ -11,17 +11,19 @@
 - исходные данные и лицензии;
 - артефакты, checksums и environment manifests;
 - secrets, backups и Git history;
-- доступность сайта и ресурсы single-host сервера.
+- независимая доступность web и research node;
+- Vercel/managed PostgreSQL/object-storage credentials.
 
 ## Границы доверия
 
-1. Интернет → reverse proxy/public web.
+1. Интернет → Vercel edge/Django function.
 2. Admin browser → authenticated Django admin/control plane.
-3. Web → PostgreSQL.
-4. PostgreSQL queue → worker.
-5. Worker → writable temp/artifact directories.
-6. CI → registry/server deployment.
-7. External datasets/repos → dependency and data intake.
+3. Vercel web-role → managed PostgreSQL over TLS.
+4. Research server worker-role → managed PostgreSQL over TLS.
+5. Worker → private temp/artifact storage.
+6. Review boundary → public object storage.
+7. GitHub/Vercel integration → Preview/production deployments.
+8. External datasets/repos → dependency and data intake.
 
 ## Ключевые угрозы и контрмеры
 
@@ -43,6 +45,11 @@
 | Stale RU/EN translation | medium | source revision link and automatic stale status |
 | Misleading generated claim | high | human review; source locator; no autonomous publication |
 | SSRF from source URL/RAG | medium now | no server-side arbitrary fetch in MVP; later egress allowlist |
+| Preview получает production DB | critical | distinct Preview DB/role; scoped Vercel env; fail closed |
+| Migration из Preview/build | critical | migrations only in separate gated release job |
+| Stolen Vercel/storage credential | high | environment scoping, least privilege, rotation, no Git/worker copy |
+| Worker offline interpreted as running | high | heartbeat, typed unavailable state, no Vercel fallback |
+| Public exposure of private artifact | high | review gate, separate buckets, private-by-default object ACL |
 
 ## Worker security profile
 
@@ -55,6 +62,16 @@
 - heartbeat and hard timeout controlled outside experiment process;
 - subprocess environment built from allowlist, not inherited wholesale;
 - raw stdout/stderr sanitized before persistence.
+- no Vercel token, Django secret or public-storage write credential.
+
+## Hybrid deployment controls
+
+- Vercel Preview and Production have separate environment scopes.
+- Preview never receives production `DATABASE_URL` or object-storage keys.
+- Django liveness does not require DB; readiness accurately reports DB state.
+- Web stays read-only/available when worker is offline.
+- Object storage uses separate public-publisher and private-worker roles.
+- Production migrations require backup evidence and an explicit release gate.
 
 ## Security gates
 
@@ -80,10 +97,12 @@
 - least-privilege DB roles;
 - external review auth/session/worker boundary;
 - incident and rollback runbooks.
+- confirmation that Preview is isolated from production data.
 
 ## Остаточный риск
 
-Контейнеры на одном host не являются сильной границей против kernel exploit.
-MVP снижает риск за счёт отсутствия недоверенного кода. Если когда-либо
-появится пользовательский code execution, потребуется отдельный sandbox/VM
-контур и новый threat model; текущая архитектура это не разрешает.
+Контейнеры на research host не являются сильной границей против kernel exploit.
+Hybrid deployment также добавляет third-party control planes и сетевой DB
+доступ. MVP снижает риск отсутствием недоверенного кода и раздельными ролями.
+Если появится пользовательский code execution, потребуется отдельный sandbox/VM
+и новый threat model; текущая архитектура это не разрешает.
