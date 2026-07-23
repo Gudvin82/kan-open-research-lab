@@ -39,3 +39,28 @@ accessibility requirements before implementation.
 
 - Checklist validates requirement quality, not implementation.
 - No unresolved requirement gap was found at this checkpoint.
+
+## Implementation review — 2026-07-23
+
+- [x] Keyboard: skip link receives first focus, remains visible, and moves focus
+  to the main landmark; primary routes and explanation anchors are ordinary
+  links.
+- [x] Browser accessibility tree: header, labelled primary navigation, main,
+  grouped footer navigation and headings were verified through role-based
+  Playwright assertions in RU and EN.
+- [x] Zoom: the EN research journey remained readable and free of page-level
+  horizontal overflow at 200% browser zoom.
+- [x] Forced colors: research status, method, evidence and reproducibility
+  remain visible as text and bordered regions; color is not the only carrier.
+- [x] Reduced motion: non-essential transitions resolve to `0s`.
+- [x] Responsive: home, Research and Methods have no page-level horizontal
+  overflow at 320 px or 1440 px in RU and EN.
+- [x] Automated scan: axe reported no critical or serious findings on Home,
+  Research, Methods, Knowledge Base and About in both locales.
+- [x] Manual visual/copy review: sixteen desktop/mobile RU/EN captures cover
+  Home, Research, Methods and footer; long Cyrillic and English strings were
+  inspected.
+
+The review verifies the scoped landmarks and journeys above. It is not a claim
+that axe or browser role assertions replace testing with disabled users and
+assistive technologies before a public release.

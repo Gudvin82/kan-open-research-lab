@@ -1,6 +1,7 @@
 # Foundation Verification
 
-**Date:** 2026-07-23  
+**Date:** 2026-07-23
+
 **Environment:** macOS, uv CPython 3.13.13, Colima 0.10.3, Docker CLI 29.6.2,
 Docker Engine 29.5.2, Compose 5.3.1
 
@@ -83,3 +84,90 @@ approved linking step.
   legacy database, worker integration and every production deployment to the
   research server. It does not block a database-free Vercel Preview or public
   shell when the credential is neither used nor supplied to Vercel.
+
+---
+
+# Design System + Bilingual Public Shell Verification
+
+**Date:** 2026-07-23
+
+**Verified implementation commit:**
+`1ec58908c9c54b7c636286d506f7d94e3c133b48`
+
+## Local gates
+
+| Check | Result |
+|---|---|
+| `uv run ruff format --check .` | PASS, 36 files |
+| `uv run ruff check .` | PASS |
+| `uv run mypy src` | PASS, 23 source files |
+| `uv run pytest` | PASS, 75 tests |
+| `manage.py makemigrations --check --dry-run` | PASS, no changes |
+| database-free production `manage.py check --deploy --fail-level WARNING` | PASS |
+| database-free production `collectstatic` | PASS, 134 files copied and 400 post-processed |
+| `uv run pip-audit` | PASS, no known vulnerabilities |
+| `uv lock --project research_engine --check` | PASS |
+| `npm audit --audit-level=high` | PASS, 0 vulnerabilities |
+| `npm test` | PASS, 24 Chromium tests |
+| local Gitleaks 8.30.1 | PASS, 10 commits and about 900 KB scanned |
+
+The browser suite covers same-entity RU/EN switching, no-JavaScript navigation,
+keyboard focus, ten axe scans, forced colors, reduced motion, 200% zoom and
+320/1440 px layouts. Axe produced no critical or serious findings. The
+completed manual scope and its limitation are recorded in the feature
+accessibility checklist.
+
+## Visual and copy evidence
+
+The reproducible command `npm run capture:ui-evidence` created sixteen ignored
+PNG files under `artifacts/ui-evidence/`:
+
+- RU and EN Home, Research and Methods at 1440×1000 and 390×844;
+- RU and EN footer crops at desktop and mobile sizes.
+
+The captures were visually inspected for hierarchy, clipping, long strings,
+locale consistency, warm-paper design, readable status fields and footer
+content. The Research pages visibly separate known-result reproduction from
+open questions. Every open demonstration says that the problem remains open
+and that a numerical result or low error is not proof.
+
+The sorted SHA-256 manifest aggregate for the sixteen PNG files is
+`a8f3b7fa1bcf9ff0f8ba2b9dce981532530b5b2e4c1163f7aa5e54c75b0a3d15`.
+Screenshots and Playwright traces are intentionally excluded from Git; CI
+uploads browser artifacts only on failure.
+
+## Font evidence
+
+Golos Text was taken from the official `googlefonts/golos-text` repository at
+commit `cf2e27222937d97c2d858fff0499bcc667a64e9d`, converted without subsetting to
+one variable WOFF2, and stored with SIL Open Font License 1.1. Coverage was
+checked for Cyrillic and Latin; the `wght` axis covers 400–900. The file is
+76,540 bytes with SHA-256
+`177af0794fb0c2308b2edc76d8744549b5b390b30c67436892578c5f07c0bf00`.
+`font-display: swap` and a complete system fallback keep the site usable
+without the custom font.
+
+## Deployment and resource boundary
+
+- Public pages and production static collection work without PostgreSQL.
+- The public footer and compute API retain `compute_node_unavailable`.
+- No DB, publication model, migration, KAN/ML worker or server integration was
+  added.
+- Vercel build/startup contains no migration command; Preview cannot use a
+  production-labelled DB through the settings contract.
+- Node, Chromium and Playwright are development/CI-only and excluded from the
+  Python image and Vercel source bundle.
+- No Vercel project was linked, no deployment was performed, and no external or
+  paid resource was created.
+- T049–T050 remain blocked on separate owner approval.
+
+## Known limitations
+
+- Demonstration research entries are reviewable static fixtures, not published
+  experimental results.
+- English copy is checked in and reviewed as project copy, but no general
+  editorial translation workflow exists yet.
+- Publication models, search, admin editorial workflow, analytics, legal
+  documents and public email are intentionally absent.
+- A real Vercel Preview remains unverified until the owner separately approves
+  T049.

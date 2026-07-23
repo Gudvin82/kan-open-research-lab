@@ -1,7 +1,8 @@
 # Quickstart and Verification: Design System + Bilingual Public Shell
 
-These are planned implementation/acceptance commands. They are not evidence
-that implementation exists at the planning checkpoint.
+These commands reproduce the implementation and acceptance checks. Immutable
+results for the tested implementation commit are recorded in
+`docs/VERIFICATION.md`.
 
 ## Local server
 
@@ -37,6 +38,7 @@ Expected: all pass and no migration is created for this feature.
 npm ci
 npx playwright install --with-deps chromium
 npm run test:ui
+npm run capture:ui-evidence
 ```
 
 Expected:
@@ -49,6 +51,9 @@ Expected:
 
 Automated accessibility results do not replace the manual review in
 `checklists/ux-accessibility.md`.
+
+Visual evidence is written to ignored `artifacts/ui-evidence/`; the PNG files
+must not be committed.
 
 ## Vercel configuration inspection
 
