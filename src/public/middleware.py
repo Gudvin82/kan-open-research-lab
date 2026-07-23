@@ -4,6 +4,19 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 
 
+class PreviewRobotsMiddleware:
+    """Prevent every response from an explicitly configured Preview being indexed."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        response = self.get_response(request)
+        if settings.PREVIEW_NO_INDEX:
+            response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
+
+
 class LocalePreferenceMiddleware:
     """Persist an explicit locale URL without overriding future explicit URLs."""
 

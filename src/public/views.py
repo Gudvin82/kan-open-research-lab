@@ -4,7 +4,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
-from .content import METHODS, PAGES, RESEARCH, PageCopy
+from .content import METHODS, PAGES, RESEARCH, UI, PageCopy
 
 
 def _locale(request: HttpRequest) -> str:
@@ -99,4 +99,26 @@ def about(request: HttpRequest) -> HttpResponse:
         request,
         "public/pages/about.html",
         _base_context(request, "about"),
+    )
+
+
+def not_found(request: HttpRequest, exception: Exception) -> HttpResponse:
+    del exception
+    locale = _locale(request)
+    page = PageCopy(
+        key="not-found",
+        title=UI[locale]["not_found_title"],
+        eyebrow="404",
+        summary=UI[locale]["not_found_summary"],
+        description=UI[locale]["not_found_summary"],
+    )
+    return render(
+        request,
+        "public/pages/404.html",
+        {
+            "page": page,
+            "nav_key": "",
+            "methods": METHODS[locale].values(),
+        },
+        status=404,
     )

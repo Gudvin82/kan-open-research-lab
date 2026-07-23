@@ -109,11 +109,25 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Browser, responsive and accessibility checks
         run: npm run test:ui
-      - name: Upload browser evidence on failure
-        if: failure()
+      - name: Capture RU/EN desktop and mobile evidence
+        run: |
+          uv run python manage.py runserver 127.0.0.1:8001 --noreload &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8001/health/live/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npm run capture:ui-evidence
+      - name: Upload browser report and visual evidence
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: playwright-evidence
-          path: artifacts/playwright/
+          name: ui-evidence-${{ github.sha }}
+          path: |
+            artifacts/playwright/report/
+            artifacts/ui-evidence/
           if-no-files-found: ignore
           retention-days: 7

@@ -20,6 +20,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "src.public.middleware.PreviewRobotsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -106,6 +107,7 @@ LANGUAGE_COOKIE_AGE = 365 * 24 * 60 * 60
 TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_TZ = True
+PREVIEW_NO_INDEX = False
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"

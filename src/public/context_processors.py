@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.conf import settings
 from django.http import HttpRequest
 from django.urls import translate_url
 
@@ -25,6 +26,7 @@ def public_shell(request: HttpRequest) -> dict[str, Any]:
             request.path if locale == "en" else translate_url(request.path, "en")
         ),
         "counterpart_url": counterpart_path,
+        "preview_noindex": settings.PREVIEW_NO_INDEX,
         "ru_absolute_url": request.build_absolute_uri(
             request.path if locale == "ru" else translate_url(request.path, "ru")
         ),

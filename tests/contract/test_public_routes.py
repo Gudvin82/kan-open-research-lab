@@ -67,3 +67,17 @@ def test_public_shell_does_not_require_a_database(client: Client) -> None:
         response = client.get("/ru/")
 
     assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    ("locale", "title"),
+    (("ru", "Страница не найдена"), ("en", "Page not found")),
+)
+def test_not_found_page_is_localized(client: Client, locale: str, title: str) -> None:
+    response = client.get(f"/{locale}/missing-page/")
+    html = response.content.decode()
+
+    assert response.status_code == 404
+    assert f'<html lang="{locale}"' in html
+    assert f"<h1>{title}</h1>" in html
+    assert f'href="/{locale}/"' in html

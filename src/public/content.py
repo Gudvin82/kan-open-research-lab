@@ -85,6 +85,11 @@ UI: dict[str, dict[str, str]] = {
         "known_label": "Воспроизводим известное",
         "open_label": "Исследуем открытое",
         "no_publications": "Материалы готовятся",
+        "not_found_title": "Страница не найдена",
+        "not_found_summary": (
+            "Такого адреса нет. Проверьте ссылку или вернитесь на главную."
+        ),
+        "back_home": "Вернуться на главную",
     },
     "en": {
         "site_name": "KAN Open Research Lab",
@@ -127,6 +132,11 @@ UI: dict[str, dict[str, str]] = {
         "known_label": "Reproducing known results",
         "open_label": "Investigating open questions",
         "no_publications": "Materials in preparation",
+        "not_found_title": "Page not found",
+        "not_found_summary": (
+            "This address does not exist. Check the link or return home."
+        ),
+        "back_home": "Return home",
     },
 }
 

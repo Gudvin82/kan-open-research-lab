@@ -52,6 +52,46 @@ def test_preview_without_database_keeps_liveness_only():
     assert result.returncode == 0, result.stderr
 
 
+def test_preview_is_noindex_and_uses_security_headers_without_database():
+    env = os.environ.copy()
+    env.update(
+        {
+            "DJANGO_SETTINGS_MODULE": "src.config.settings.preview",
+            "DJANGO_SECRET_KEY": (
+                "preview-test-robots-7f9a4d2c8e1b6a3f5d0c9e7b2a4f8d1c"
+            ),
+            "VERCEL_ENV": "preview",
+        }
+    )
+    env.pop("DATABASE_URL", None)
+    env.pop("DATABASE_ENV", None)
+    result = subprocess.run(  # noqa: S603
+        [
+            sys.executable,
+            "-c",
+            (
+                "import django; django.setup(); "
+                "from django.test import Client; c=Client(); "
+                "r=c.get('/ru/', HTTP_HOST='preview.vercel.app', "
+                "HTTP_X_FORWARDED_PROTO='https'); "
+                "assert r.status_code == 200; "
+                'assert b\'<meta name="robots" content="noindex, nofollow">\' '
+                "in r.content; "
+                "assert r.headers['X-Robots-Tag'] == 'noindex, nofollow'; "
+                "assert r.headers['X-Frame-Options'] == 'DENY'; "
+                "assert r.headers['X-Content-Type-Options'] == 'nosniff'; "
+                "assert r.headers['Referrer-Policy'] == "
+                "'strict-origin-when-cross-origin'"
+            ),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def test_preview_rejects_non_preview_database_label():
     env = os.environ.copy()
     env.update(
