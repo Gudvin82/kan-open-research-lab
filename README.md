@@ -3,8 +3,9 @@
 Предпроектная рабочая область открытой русскоязычной исследовательской и
 образовательной лаборатории KAN/MLP/PINN.
 
-Статус: **Foundation принят; Design System + Bilingual Public Shell находится
-в draft PR реализации**.
+Статус: **Foundation и Design System + Bilingual Public Shell приняты;
+Production release находится на отдельном planning checkpoint и не
+авторизован**.
 
 **Основной репозиторий:** <https://github.com/Gudvin82/kan-open-research-lab>
 
@@ -43,6 +44,7 @@ Protocols (VCP) используется как дополнительный л�
 - [план и задачи Foundation](specs/001-foundation/plan.md);
 - [спецификация bilingual public shell](specs/002-design-bilingual-shell/spec.md);
 - [план и задачи bilingual public shell](specs/002-design-bilingual-shell/plan.md);
+- [план Vercel Production release](specs/003-vercel-production-release/plan.md);
 - [аудит репозиториев и протоколов](docs/REPOSITORY_AUDIT.md);
 - [исходный single-host ADR](docs/adr/0001-mvp-architecture.md);
 - [действующий hybrid deployment ADR](docs/adr/0002-hybrid-vercel-deployment.md);
@@ -116,4 +118,5 @@ docker compose -f compose.yaml -f compose.worker.yaml up --build --detach worker
 - политика аналитики/cookie;
 - внешнее backup-хранилище и сроки хранения артефактов.
 - конкретный managed PostgreSQL и object storage;
-- production Vercel project и любые платные ресурсы.
+- Production deployment, GitHub–Vercel auto-deploy, постоянный домен и любые
+  платные ресурсы.
