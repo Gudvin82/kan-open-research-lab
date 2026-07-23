@@ -120,9 +120,9 @@ keyboard only, reduced motion and automated WCAG scans.
 - [x] T046 Confirm the server still reports `compute_node_unavailable` publicly and perform no worker integration in `tests/contract/test_compute_status.py`
 - [x] T047 Run Ruff, mypy, pytest, Django checks, npm audit and Playwright checks from `specs/002-design-bilingual-shell/quickstart.md`
 - [x] T048 Capture RU/EN desktop/mobile visual review and scientific-copy review evidence in `docs/VERIFICATION.md`
-- [ ] T049 Obtain separate owner approval before linking Vercel or creating any external/paid resource
-- [ ] T050 After T049 only, configure Vercel `main` as Production, isolate Preview variables, perform a real minimal PR Preview and record immutable URL/SHA evidence in `docs/VERIFICATION.md`
-- [ ] T051 Run Spec Kit analysis/convergence and resolve every blocking finding before marking the implementation PR ready
+- [x] T049 Obtain separate owner approval before linking a free Vercel project and creating a CLI-only Preview without paid resources
+- [x] T050 After T049 only, isolate Preview variables, perform a real minimal CLI Preview without Git integration or Production deployment, and record immutable URL/SHA evidence in `docs/VERIFICATION.md`
+- [x] T051 Run Spec Kit analysis/convergence and resolve every blocking finding before marking the implementation PR ready
 
 ## Dependencies and execution order
 
@@ -133,8 +133,8 @@ keyboard only, reduced motion and automated WCAG scans.
   component from US3.
 - US5 validates the combined shell and follows US1–US4.
 - T049 is an explicit authority gate. T050 cannot start without it.
-- The current implementation authorization stops after T048; T049–T050 remain
-  intentionally unstarted.
+- The owner approved T049–T051 for one free, CLI-only Preview; Production,
+  Git-based auto-deploy, custom domains and paid resources remain forbidden.
 - No task connects PostgreSQL, changes the server or integrates the ML worker.
 
 ## Parallel opportunities
@@ -151,5 +151,5 @@ keyboard only, reduced motion and automated WCAG scans.
 Deliver the smallest independently useful slice as Foundation + US1 + US2:
 bilingual navigation with the scientific-honesty boundary. Then add explanation
 levels, method/project context and accessibility convergence. Keep the public
-runtime database-free throughout this feature. Stop again for explicit owner
-approval before any real Vercel project linkage.
+runtime database-free throughout this feature. Production remains a separate
+owner-controlled gate after Preview review.

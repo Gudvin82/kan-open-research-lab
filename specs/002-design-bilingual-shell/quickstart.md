@@ -73,11 +73,13 @@ Expected:
 
 Run only after the owner separately approves Vercel project linking:
 
-1. Link the GitHub repository to a Vercel project.
-2. Set `main` as the sole Production branch.
-3. Set separate Preview-safe environment variables; do not expose a Production
-   DB URL to Preview.
-4. Deploy the Pull Request as Preview, never with `--prod`.
+1. Link the local checkout to the approved free Vercel project without enabling
+   Git integration or automatic deployments.
+2. Add a random `DJANGO_SECRET_KEY` only for Preview. Do not add
+   `DATABASE_URL`, worker credentials or server credentials.
+3. Build and deploy with explicit `--target preview`; never use `--prod`.
+4. Test protected deployments with `vercel curl` or an automation-bypass value
+   held only in process memory, never in Git, logs or browser artifacts.
 5. Record the immutable deployment URL, commit SHA and results of route,
    language, accessibility and no-migration checks in `docs/VERIFICATION.md`.
 
