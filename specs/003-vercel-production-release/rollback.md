@@ -76,34 +76,60 @@ must not be guessed.
    results in `docs/VERIFICATION.md`.
 8. Leave the faulty deployment in history; do not delete audit evidence.
 
-## First-release limitation
+## First-release containment
 
 At this planning checkpoint there is no earlier healthy, verified Production
 deployment. The existing Production-target attempt
 `dpl_DRbR6AZwZ29MMk4SH66xzeLa5A1z` is `ERROR`, never served the application
 and is not eligible for rollback.
 
-Therefore the first public release cannot honestly promise
-rollback-to-previous. Before Production authorization, the owner must approve a
-containment action supported and read-only-verified for the current Vercel
-project, for example:
+The selected containment is removal of the exact stable public alias:
 
-- remove or park the public Production alias; or
-- disable the faulty deployment until a reviewed correction is available.
+```text
+vercel alias rm kan-open-research-lab.vercel.app \
+  --yes --scope gudvin82s-projects
+```
 
-This document does not choose, execute or pre-authorize either action. If no
-containment option has been explicitly approved, the first Production
-deployment remains blocked.
+The command removes the alias assignment only. It MUST NOT be replaced with
+`vercel remove`, project-domain deletion or deployment deletion.
+
+First-release containment procedure:
+
+1. Stop promotion and every further deployment/configuration action.
+2. Record the faulty deployment ID/SHA, failing check and time.
+3. Reconfirm that
+   `kan-open-research-lab.vercel.app` resolves to the faulty deployment.
+4. Remove that exact alias assignment using the reviewed command above.
+5. Confirm the public alias no longer routes to the faulty deployment.
+6. Confirm the immutable deployment and logs remain available for audit.
+7. Confirm the accepted Preview and project remain intact.
+8. Correct code/configuration through a new PR.
+9. Create a new staged Production deployment with `--prod --skip-domain`.
+10. Repeat the complete immutable-URL suite.
+11. Restore public service only by explicitly promoting the new verified
+    deployment:
+
+    ```text
+    vercel promote <new-verified-deployment-id-or-url> \
+      --yes --scope gudvin82s-projects
+    ```
+
+12. Repeat critical checks through the stable alias and record all evidence.
+
+If preflight cannot prove that the exact alias is safely removable on the
+active plan/domain type, do not deploy. Report the available alternative:
+Deployment Protection or a separately reviewed maintenance/parking deployment.
 
 ## Stop conditions
 
 Stop and request owner direction when:
 
-- there is no verified predecessor and no approved containment action;
+- exact alias ownership or removability is not confirmed;
 - Vercel asks to create a paid resource or change plan;
 - an action would alter Preview protection, Git integration, domain, database
   or worker configuration;
-- the CLI proposes a deployment rather than an alias rollback;
+- the CLI proposes deleting a deployment/project/domain rather than removing
+  one alias assignment;
 - the target deployment ID/SHA cannot be proven;
 - rollback would expose a secret or require placing one in a command/log;
 - rollback succeeds technically but critical smoke checks still fail.

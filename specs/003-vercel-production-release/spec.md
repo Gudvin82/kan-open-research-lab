@@ -12,28 +12,32 @@ squash-merged into protected `main`.
 
 ## User Scenarios & Testing
 
-### User Story 1 - Release the accepted `main` artifact manually (Priority: P1)
+### User Story 1 - Stage the accepted `main` artifact manually (Priority: P1)
 
-The owner can authorize one manual Production deployment knowing that it is
-built from an exact, green commit on protected `main`, not from a feature
-branch, dirty checkout or unreviewed artifact.
+The owner can authorize one manual Production-target deployment knowing that
+it is built from an exact, green commit on protected `main`, receives no
+automatic public alias, and can be verified before public traffic is moved.
 
 **Why this priority**: Source identity and an explicit release action are the
 primary controls separating an accepted Preview from a public release.
 
 **Independent Test**: Before deployment, compare local `HEAD`, `origin/main`
 and the recorded release SHA, confirm a clean worktree and green required
-checks, then verify that deployment metadata reports that exact SHA and
-Production target.
+checks, then verify that `--prod --skip-domain` produces a Ready
+Production-target deployment for that exact SHA without assigning the stable
+public alias.
 
 **Acceptance Scenarios**:
 
 1. **Given** Production has been separately authorized, **When** the release
    command is prepared, **Then** it uses a clean protected `main`, a recorded
-   commit SHA and an explicit `--prod` target.
+   commit SHA and explicit `--prod --skip-domain`.
 2. **Given** the branch, SHA or required checks differ, **When** the preflight
    runs, **Then** deployment stops before any Vercel mutation.
-3. **Given** no separate Production authorization exists, **When** this
+3. **Given** a staged deployment is Ready, **When** it is verified, **Then**
+   the stable Production alias remains unassigned until every immutable-URL
+   gate passes.
+4. **Given** no separate Production authorization exists, **When** this
    planning stage is accepted, **Then** no deployment occurs.
 
 ---
@@ -53,8 +57,9 @@ then confirm the existing Preview still requires Vercel Authentication.
 
 **Acceptance Scenarios**:
 
-1. **Given** a successful Production deployment, **When** an anonymous reader
-   opens the stable URL, **Then** the shell is publicly accessible.
+1. **Given** a staged Production deployment passed every immutable-URL gate,
+   **When** that exact deployment is explicitly promoted, **Then** an anonymous
+   reader can open the stable URL.
 2. **Given** the Production environment, **When** configuration is inspected,
    **Then** it contains a Production-only random `DJANGO_SECRET_KEY`,
    `DEBUG=False`, and no database, worker or server credential.
@@ -82,13 +87,17 @@ stable Production URLs, then reproduce the recorded results from
 
 **Acceptance Scenarios**:
 
-1. **Given** a Ready deployment, **When** the release verification runs, **Then**
-   RU/EN pages, method routes, localized 404, static assets, health endpoints,
-   canonical/hreflang, security headers and honest compute state are checked.
-2. **Given** Production runtime logs, **When** the release window is inspected,
+1. **Given** a Ready staged deployment with no public alias, **When** the
+   release verification runs, **Then** RU/EN pages, method routes, localized
+   404, static assets, health endpoints, canonical/hreflang, security headers
+   and honest compute state are checked through its deployment-specific URL.
+2. **Given** the staged deployment passes and is promoted, **When** critical
+   smoke checks are repeated, **Then** the stable public alias resolves to the
+   same deployment and exact SHA.
+3. **Given** Production runtime logs, **When** the release window is inspected,
    **Then** HTTP 500, secret leakage, migration, PostgreSQL and worker searches
    are recorded without publishing raw sensitive logs.
-3. **Given** all gates pass, **When** evidence is committed later, **Then**
+4. **Given** all gates pass, **When** evidence is committed later, **Then**
    deployment ID, immutable and stable URLs, exact `main` SHA, date, CLI
    version, non-secret environment inventory and results are recorded.
 
@@ -112,8 +121,8 @@ rollback decision tree without moving aliases.
    current release fails post-deploy checks, **Then** aliases are rolled back to
    the recorded previous deployment and smoke checks are repeated.
 2. **Given** no previous healthy Production deployment exists, **When** the
-   first release fails, **Then** the operator stops and follows the approved
-   first-release containment decision rather than inventing a rollback target.
+   first promoted release fails, **Then** the operator removes the exact stable
+   public alias without deleting the deployment, project, Preview or logs.
 3. **Given** rollback succeeds, **When** evidence is updated, **Then** the
    failed deployment, restored deployment, reason and verification results are
    documented without deleting audit history.
@@ -123,6 +132,7 @@ rollback decision tree without moving aliases.
 - The local checkout is clean but `origin/main` advanced after approval.
 - Required GitHub checks were green on a parent SHA, not the release SHA.
 - Vercel CLI defaults to an unexpected target when no target flag is supplied.
+- `--skip-domain` is ignored or aliases a staged deployment unexpectedly.
 - The Production alias differs from the immutable deployment URL.
 - The stable URL redirects through an unexpected host, producing incorrect
   canonical or `hreflang` values.
@@ -132,6 +142,7 @@ rollback decision tree without moving aliases.
 - Health readiness correctly remains unavailable because no database exists.
 - Preview Authentication is accidentally disabled while Production is opened.
 - No previous healthy Production deployment exists for the first release.
+- The project-owned `vercel.app` alias cannot be removed on the active plan.
 - Rollback restores the alias but not the expected source SHA.
 - A log query returns sensitive values that must not be pasted into Git or PR.
 
@@ -145,9 +156,9 @@ rollback decision tree without moving aliases.
   deployment.
 - **FR-004**: The worktree MUST be clean and all required GitHub checks for the
   release SHA MUST pass.
-- **FR-005**: The first Production deployment MUST be manual and use an
-  explicit `--prod` target; a plain `vercel` or `vercel deploy` command is
-  forbidden.
+- **FR-005**: The first Production deployment MUST be manual and use explicit
+  `--prod --skip-domain`; a plain `vercel`, plain `vercel deploy` or automatic
+  alias assignment is forbidden.
 - **FR-006**: The Vercel CLI version and the complete non-secret command shape
   MUST be recorded.
 - **FR-007**: GitHub–Vercel automatic deployment MUST remain disabled until the
@@ -194,14 +205,29 @@ rollback decision tree without moving aliases.
   `dpl_DRbR6AZwZ29MMk4SH66xzeLa5A1z` MUST remain as audit evidence.
 - **FR-029**: Preview commands MUST continue to use explicit
   `--target preview`.
-- **FR-030**: Rollback MUST target a recorded, previously verified Ready
-  Production deployment and MUST re-run critical smoke checks.
+- **FR-030**: When a previous known-good deployment exists, rollback MUST
+  target that recorded, verified Ready Production deployment and re-run
+  critical smoke checks.
 - **FR-031**: If no previous healthy Production deployment exists, the first
-  release MUST NOT claim that rollback-to-previous is available; containment
-  requires an explicit owner-approved action.
+  release MUST remove the exact stable public alias as containment without
+  deleting the deployment, project, Preview or logs.
 - **FR-032**: Production deployment, rollback execution, Git integration,
   domain, database and worker mutations each remain separately authorized
   actions.
+- **FR-033**: Before Production authorization, read-only preflight MUST confirm
+  current-project support for `--skip-domain`, separate promotion, exact stable
+  alias removal and alias restoration.
+- **FR-034**: The exact intended stable Production alias MUST be discovered
+  from current Vercel project metadata and MUST NOT be guessed.
+- **FR-035**: Every staged Production deployment MUST pass the full acceptance
+  suite through its deployment-specific URL before promotion.
+- **FR-036**: Promotion MUST target the exact verified deployment ID/URL and
+  MUST NOT rebuild the artifact.
+- **FR-037**: Critical smoke, identity and security checks MUST repeat through
+  the stable public alias immediately after promotion.
+- **FR-038**: If exact alias removal is unsupported for the active plan/domain
+  type, Production MUST remain blocked until Deployment Protection or a
+  reviewed maintenance/parking deployment is approved.
 
 ### Key Entities
 
@@ -224,10 +250,11 @@ rollback decision tree without moving aliases.
 
 - **SC-001**: The deployed source SHA equals the recorded protected `main` SHA
   and all required checks for that SHA are successful.
-- **SC-002**: One manual Production deployment uses an explicit Production
-  target; zero automatic Production deployments occur during this stage.
-- **SC-003**: Anonymous requests reach the stable Production URL while the
-  accepted Preview remains authentication-protected.
+- **SC-002**: One manual Production deployment uses
+  `--prod --skip-domain`; zero public aliases move before immutable-URL
+  verification passes.
+- **SC-003**: Exactly one explicit promotion points the stable alias to the
+  verified deployment, while the accepted Preview remains protected.
 - **SC-004**: 100% of required RU/EN primary and method routes pass smoke
   checks on both immutable and stable Production hosts.
 - **SC-005**: The existing 24-test Playwright/axe suite passes against
@@ -247,8 +274,10 @@ rollback decision tree without moving aliases.
   `c9362f71ca464f9ad8b4f6ec35157b7c0ffc9e53`.
 - The accepted Preview remains available and protected.
 - The first healthy Production deployment has no earlier known-good
-  Production predecessor; this limits immediate rollback and is an explicit
-  planning decision.
+  Production predecessor; first-release containment removes the exact public
+  alias without deleting deployment evidence.
+- Read-only preflight identified `kan-open-research-lab.vercel.app` as the
+  verified, non-branch project domain intended for the stable Production alias.
 - No database is required for the public shell.
 - A Vercel-assigned stable URL is sufficient for this stage; a custom domain
   is outside scope.

@@ -8,11 +8,14 @@
 
 ## Summary
 
-Prepare, authorize and verify one manual public Vercel Production deployment of
+Prepare, authorize and verify one staged Vercel Production-target deployment of
 the accepted database-free Django shell from an exact protected-`main` SHA.
-Production and Preview environments remain isolated, no database or worker is
-introduced, indexing stays disabled, and Git-based automatic deployment stays
-off. This planning PR stops before every external mutation.
+The deployment uses `--skip-domain`, passes the complete acceptance suite
+through its immutable URL, and only then receives public traffic through an
+explicit promotion. Production and Preview environments remain isolated, no
+database or worker is introduced, indexing stays disabled, and Git-based
+automatic deployment stays off. This planning PR stops before every external
+mutation.
 
 ## Technical Context
 
@@ -36,12 +39,14 @@ monolith
 **Performance Goals**: No HTTP 500 during the release window; no obvious cold
 start regression relative to the accepted Preview evidence
 
-**Constraints**: Protected `main` only; explicit `--prod`; public Production;
-protected Preview; `DEBUG=False`; Production-only secret; no database, worker,
-migration, custom domain, paid resource or indexing
+**Constraints**: Protected `main` only; explicit `--prod --skip-domain`;
+immutable-URL verification before promote; public Production only after
+promote; protected Preview; `DEBUG=False`; Production-only secret; no database,
+worker, migration, custom domain, paid resource or indexing
 
-**Scale/Scope**: One manual deployment, one stable alias, one immutable URL,
-RU/EN public shell and one rollback rehearsal
+**Scale/Scope**: One staged manual deployment, one explicit promotion, one
+stable alias, one immutable URL, RU/EN public shell and one containment
+rehearsal
 
 ## Constitution Check
 
@@ -68,14 +73,18 @@ RU/EN public shell and one rollback rehearsal
    Production environment or deployment mutation.
 4. Re-resolve protected `origin/main`, exact SHA and required checks after that
    authorization. Approval of an older SHA does not transfer automatically.
-5. Use a CLI command with explicit Production intent:
-   `vercel deploy --prod --yes --scope gudvin82s-projects`.
-   Plain `vercel` and plain `vercel deploy` are forbidden.
+5. Use a staged CLI command with explicit Production intent and no automatic
+   alias:
+   `vercel deploy --prod --skip-domain --yes --scope gudvin82s-projects`.
+   Plain `vercel`, plain `vercel deploy` and Production deployment without
+   `--skip-domain` are forbidden.
 6. Keep Git integration, automatic deployments, domains, databases, workers
    and paid resources disabled.
-7. Treat a Ready build as provisional until the complete Production checklist
-   passes.
-8. If any critical check fails, stop and follow [rollback.md](rollback.md);
+7. Treat a Ready staged build as provisional and private from the stable alias
+   until the immutable-URL checklist passes.
+8. Promote only the exact verified deployment and repeat critical checks
+   through the stable alias.
+9. If any critical check fails, stop and follow [rollback.md](rollback.md);
    never “fix forward” with an unreviewed second Production deployment.
 
 ## Planned Work
@@ -87,14 +96,18 @@ RU/EN public shell and one rollback rehearsal
 3. Record the installed Vercel CLI version and revalidate flag semantics.
 4. Inspect Vercel project settings without changing them:
    Git integration disabled, Preview protected, no paid resources or domains.
-5. Inventory Preview and Production environment variable **names/scopes only**.
-6. Add or refine automated contracts so Production:
+5. Confirm `--skip-domain`, separate `promote`, exact stable alias removal and
+   restoration on the active project/plan.
+6. Discover and record the exact stable Production alias from Vercel project
+   metadata; never derive or guess it from the project name.
+7. Inventory Preview and Production environment variable **names/scopes only**.
+8. Add or refine automated contracts so Production:
    - fails closed without `DJANGO_SECRET_KEY` and allowed host configuration;
    - remains `DEBUG=False`;
    - has a deliberate `noindex, nofollow` switch enabled by default;
    - cannot receive a non-Production-labelled database URL;
    - never runs migrations or worker commands.
-7. Run all local and CI checks before requesting deployment authorization.
+9. Run all local and CI checks before requesting deployment authorization.
 
 ### Phase 2 — Separately authorized environment setup
 
@@ -108,31 +121,47 @@ RU/EN public shell and one rollback rehearsal
 4. Confirm Production variables are not available to Preview.
 5. Record variable names and scopes only.
 
-### Phase 3 — Manual Production deployment
+### Phase 3 — Staged Production deployment
 
 1. Re-check the SHA and CI immediately before deployment.
-2. Run exactly one manual deployment with explicit `--prod`.
-3. Record command shape, CLI version, deployment ID, immutable URL, stable
-   Production URL, target, state and reported source SHA.
-4. Do not enable Git integration or make another deployment automatically.
+2. Run exactly one manual deployment with explicit
+   `--prod --skip-domain`.
+3. Record command shape, CLI version, deployment ID, immutable URL, target,
+   state and reported source SHA.
+4. Confirm the stable Production alias was not assigned.
+5. Do not enable Git integration or make another deployment automatically.
 
-### Phase 4 — Runtime acceptance
+### Phase 4 — Immutable-URL acceptance
 
-1. Verify anonymous public access to Production and authenticated protection
-   of Preview.
-2. Run smoke checks against both immutable and stable Production URLs:
+1. Run smoke checks against the deployment-specific immutable URL:
    root redirect, RU/EN primary pages, method pages, localized 404, CSS/font,
    language switching, canonical and `hreflang`.
-3. Verify health/liveness, honest database-free readiness and
+2. Verify health/liveness, honest database-free readiness and
    `compute_node_unavailable`.
-4. Verify security headers, `noindex, nofollow`, and absence of sensitive data
+3. Verify security headers, `noindex, nofollow`, and absence of sensitive data
    from HTML and headers.
-5. Run Playwright/axe for RU/EN, keyboard/no-JavaScript, 320 px and desktop.
-6. Inspect redacted runtime-log queries for HTTP 500, secrets, migrations,
+4. Run all 24 Playwright/axe checks for RU/EN, keyboard/no-JavaScript, 320 px
+   and desktop.
+5. Inspect redacted runtime-log queries for HTTP 500, secrets, migrations,
    PostgreSQL and worker activity.
-7. Compare cold/warm samples with Preview evidence as an observation, not SLA.
+6. Compare cold/warm samples with Preview evidence as an observation, not SLA.
+7. Stop without promotion if any check fails.
 
-### Phase 5 — Evidence and release decision
+### Phase 5 — Explicit promotion and public verification
+
+1. Re-resolve and record the exact stable alias immediately before promotion.
+2. Promote only the verified deployment:
+   `vercel promote <verified-deployment-id-or-url> --yes --scope gudvin82s-projects`.
+3. Confirm the stable alias points to the same deployment ID and source SHA.
+4. Verify anonymous public access to the stable alias and continued
+   authentication protection of Preview.
+5. Repeat root/RU/EN smoke, canonical/hreflang, `noindex`, security headers,
+   liveness, honest readiness, compute state and HTTP 500 log checks through
+   the stable alias.
+6. If a critical check fails and no predecessor exists, remove only the exact
+   stable alias per [rollback.md](rollback.md); do not delete the deployment.
+
+### Phase 6 — Evidence and release decision
 
 1. If all gates pass, add a Production section to `docs/VERIFICATION.md` with
    exact provenance and results.
@@ -155,9 +184,10 @@ The detailed procedure is [rollback.md](rollback.md).
 - The historical `dpl_DRbR6AZwZ29MMk4SH66xzeLa5A1z` is `ERROR` and is never a
   rollback candidate.
 - For the first healthy Production release there is currently no prior
-  known-good Production target. The owner must choose and approve the
-  first-release containment behavior before deployment. Until then, Production
-  is blocked even if every other check is green.
+  known-good Production target. The selected containment is removal of the
+  exact stable public alias without deleting the deployment, project, Preview
+  or logs. A corrected artifact repeats staged deployment, immutable-URL
+  verification and explicit promotion.
 
 ## Project Structure
 
@@ -167,7 +197,10 @@ The detailed procedure is [rollback.md](rollback.md).
 specs/003-vercel-production-release/
 ├── spec.md
 ├── plan.md
+├── convergence.md
+├── preflight.md
 ├── rollback.md
+├── tasks.md
 └── checklists/
     └── production-release.md
 ```
@@ -188,8 +221,9 @@ before Production authorization.
 
 ## Planning Decisions
 
-- Use `--prod` as the explicit Vercel Production target flag documented by the
-  installed CLI; never rely on CLI defaults.
+- Use `--prod --skip-domain` for staged Production and never rely on CLI
+  defaults or automatic aliasing.
+- Promote the exact verified deployment only after immutable-URL acceptance.
 - Use the Vercel-assigned stable URL for this stage; custom domain is deferred.
 - Keep Production `noindex, nofollow` until a separate permanent-domain and
   content-indexing decision.
@@ -197,15 +231,18 @@ before Production authorization.
 - Do not enable automatic deployment as part of the first manual release.
 - Do not delete failed deployments; deployment history is audit evidence.
 
-## Open Decision
+## Resolved Containment Decision
 
-**First-release containment when no previous healthy Production deployment
-exists.** Vercel rollback-to-previous requires an eligible earlier Ready
-Production deployment, and none currently exists. Before authorizing the first
-release, the owner must select a containment action supported by the verified
-Vercel project controls, such as immediately removing/parking the public alias
-or disabling the faulty deployment. This planning PR intentionally does not
-perform or pre-authorize either mutation.
+Read-only preflight in [preflight.md](preflight.md) identified
+`kan-open-research-lab.vercel.app` as the verified, non-branch stable project
+domain. The active Vercel CLI supports Production `--skip-domain`, separate
+promotion, alias removal and alias restoration on the current Hobby team.
+
+If the first promoted deployment fails and no predecessor exists, remove only
+that exact public alias. Keep the deployment, project, Preview and logs. If a
+later preflight finds that the exact system alias cannot be removed safely,
+Production remains blocked until the owner approves Deployment Protection or a
+maintenance/parking deployment.
 
 ## Complexity Tracking
 
