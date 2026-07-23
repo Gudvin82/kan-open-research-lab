@@ -4,6 +4,20 @@
 **Environment:** macOS, uv CPython 3.13.13, Colima 0.10.3, Docker CLI 29.6.2,
 Docker Engine 29.5.2, Compose 5.3.1
 
+**Verified commit:** `a1be6fad46a0fdd97588bb15dae9a513f72700b1`
+
+## GitHub Actions evidence
+
+| Workflow / job | Result | Run |
+|---|---|---|
+| Governance / `governance` | PASS | [30024471563](https://github.com/Gudvin82/kan-open-research-lab/actions/runs/30024471563) |
+| Quality / `python` | PASS | [30024472074](https://github.com/Gudvin82/kan-open-research-lab/actions/runs/30024472074) |
+| Quality / `secrets` | PASS | [30024472074](https://github.com/Gudvin82/kan-open-research-lab/actions/runs/30024472074) |
+
+The earlier Governance run `30022711627` failed on `.env.example`; commit
+`a1be6fa` corrected the overly broad path rule. The superseding run above is
+green and is the evidence used for Foundation acceptance.
+
 ## Code and dependency gates
 
 | Check | Result |
@@ -63,3 +77,7 @@ approved linking step.
 - Local Gitleaks 8.30.1 scanned the working tree (about 518 KB) and three Git
   commits with redaction enabled; no leaks were found.
 - GitHub secret scanning/push protection remain enabled; PR CI adds Gitleaks.
+- A plaintext database credential was found only in an external workspace
+  `CLAUDE.md`. Its value was not copied to this repository, Git history, logs,
+  issues or PRs. Rotation remains a mandatory blocker for connecting to that
+  legacy database and for every production deployment to the research server.

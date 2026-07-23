@@ -38,3 +38,22 @@ RESTORE_DATABASE_NAME=kan_restore_test \
 ```
 
 Restore refuses database names without `test` or `local`.
+
+## Safe stop without deleting data
+
+Stop processes while preserving containers, named volumes and PostgreSQL data:
+
+```bash
+docker compose -f compose.yaml -f compose.worker.yaml stop
+colima stop
+```
+
+Alternatively, remove only project containers and the Compose network while
+preserving named volumes:
+
+```bash
+docker compose -f compose.yaml -f compose.worker.yaml down
+colima stop
+```
+
+Do not use `down --volumes`, `docker volume prune` or `colima delete`.

@@ -26,3 +26,19 @@ database admin credential, drops all capabilities and is limited to 4 GiB RAM,
 Logs are JSON and redact common secret assignments and PostgreSQL DSN userinfo.
 Do not log request headers, environment dumps, private datasets or raw internal
 experiment output.
+
+## Safe local shutdown
+
+`docker compose -f compose.yaml -f compose.worker.yaml stop` followed by
+`colima stop` preserves containers, named volumes and database data. Plain
+`docker compose ... down` also preserves named volumes, but removes containers
+and the project network. Operators must not use `down --volumes`,
+`docker volume prune` or `colima delete` during normal shutdown.
+
+## Production connection blocker
+
+The credential reported in the external workspace `CLAUDE.md` is not present
+in this repository. It must be rotated before any connection to that legacy
+database or production deployment on the research server. Rotation must update
+the consuming service secret atomically and include a restart/health check;
+Foundation does not perform or automate it.
