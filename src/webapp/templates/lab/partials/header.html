@@ -1,0 +1,16 @@
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="wordmark" href="{% url 'public:home' %}" aria-label="{{ ui.site_name }}">
+      <span class="wordmark-mark" aria-hidden="true">K</span>
+      <span>{{ ui.site_short }}</span>
+    </a>
+    {% include "lab/partials/language_switch.html" %}
+    <nav aria-label="{{ ui.primary_nav }}" class="primary-nav">
+      <a href="{% url 'public:home' %}"{% if nav_key == "home" %} aria-current="page"{% endif %}>{{ ui.home }}</a>
+      <a href="{% url 'public:research' %}"{% if nav_key == "research" %} aria-current="page"{% endif %}>{{ ui.research }}</a>
+      <a href="{% url 'public:methods' %}"{% if nav_key == "methods" %} aria-current="page"{% endif %}>{{ ui.methods }}</a>
+      <a href="{% url 'public:knowledge' %}"{% if nav_key == "knowledge" %} aria-current="page"{% endif %}>{{ ui.knowledge }}</a>
+      <a href="{% url 'public:about' %}"{% if nav_key == "about" %} aria-current="page"{% endif %}>{{ ui.about }}</a>
+    </nav>
+  </div>
+</header>

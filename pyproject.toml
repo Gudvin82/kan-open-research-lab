@@ -24,10 +24,7 @@ dev = [
 package = false
 
 [tool.vercel]
-entrypoint = "src.config.asgi:application"
-
-[tool.vercel.scripts]
-build = "DJANGO_SETTINGS_MODULE=src.config.settings.build python manage.py collectstatic --noinput"
+entrypoint = "api.index:app"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "src.config.settings.test"

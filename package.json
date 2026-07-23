@@ -1,0 +1,19 @@
+{
+  "name": "kan-open-research-lab-ui-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Development-only browser checks for the public Django shell",
+  "scripts": {
+    "capture:ui-evidence": "node tests/ui/capture-evidence.mjs",
+    "test": "playwright test",
+    "test:ui": "playwright test",
+    "test:ui:update": "playwright test --update-snapshots"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

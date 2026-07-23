@@ -1,0 +1,19 @@
+{% extends "lab/base.html" %}
+{% block content %}
+  <article data-performance-claim="none">
+    {% include "lab/partials/page_intro.html" %}
+    <section class="shell method-boundary">
+      <div>
+        <p class="eyebrow">{{ ui.what_supports }}</p>
+        <p>{{ method.purpose }}</p>
+      </div>
+      <div>
+        <p class="eyebrow">{{ ui.what_not }}</p>
+        <p>{{ method.limitation }}</p>
+      </div>
+    </section>
+    <div class="shell levels-layout">
+      {% include "lab/partials/explanation_levels.html" %}
+    </div>
+  </article>
+{% endblock %}

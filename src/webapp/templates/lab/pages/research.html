@@ -1,0 +1,34 @@
+{% extends "lab/base.html" %}
+{% block content %}
+  {% include "lab/partials/page_intro.html" %}
+  <aside class="shell proof-note">
+    <span aria-hidden="true">!</span>
+    <p>{{ ui.scientific_disclaimer }}</p>
+  </aside>
+  <section class="shell research-collection" data-research-collection="reproduced" aria-labelledby="reproduced-title">
+    <header class="collection-heading">
+      <p class="section-number">01 / REPRODUCE</p>
+      <h2 id="reproduced-title">{{ ui.known_label }}</h2>
+      <p>{% if locale == "ru" %}Известное решение — не наша новизна. Наша работа здесь — независимо проверить постановку, код и границы результата.{% else %}An established solution is not our novelty. Our role here is to independently check the setup, code and boundaries of the result.{% endif %}</p>
+    </header>
+    <div class="research-list">
+      {% for card in reproduced_cards %}
+        {% include "lab/partials/research_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+  <section class="open-band">
+    <div class="shell research-collection" data-research-collection="open" aria-labelledby="open-title">
+      <header class="collection-heading">
+        <p class="section-number">02 / OPEN</p>
+        <h2 id="open-title">{{ ui.open_label }}</h2>
+        <p class="open-statement">{{ ui.open_notice }}</p>
+      </header>
+      <div class="research-list">
+        {% for card in open_cards %}
+          {% include "lab/partials/research_card.html" %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

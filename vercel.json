@@ -1,10 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
+  "buildCommand": "DJANGO_SETTINGS_MODULE=src.config.settings.build uv run python manage.py collectstatic --noinput --clear",
+  "outputDirectory": "public",
   "functions": {
-    "src/config/asgi.py": {
+    "api/index.py": {
       "maxDuration": 30,
-      "excludeFiles": "{research_engine/**,tests/**,specs/**,docs/**}"
+      "excludeFiles": "{.agents/**,.env*,.github/**,.pytest_cache/**,.specify/**,AGENTS.md,Dockerfile,artifacts/**,compose*.yaml,docs/**,node_modules/**,package*.json,playwright.config.ts,research_engine/**,scripts/**,specs/**,tests/**,tmp/**}"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ]
 }

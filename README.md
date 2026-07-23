@@ -3,7 +3,8 @@
 Предпроектная рабочая область открытой русскоязычной исследовательской и
 образовательной лаборатории KAN/MLP/PINN.
 
-Статус: **Этап 0 утверждён и влит; Foundation реализуется**.
+Статус: **Foundation принят; Design System + Bilingual Public Shell находится
+в draft PR реализации**.
 
 **Основной репозиторий:** <https://github.com/Gudvin82/kan-open-research-lab>
 
@@ -40,6 +41,8 @@ Protocols (VCP) используется как дополнительный л�
 - [спецификация Этапа 0](specs/000-preproject-audit/spec.md);
 - [утверждённая спецификация Foundation](specs/001-foundation/spec.md);
 - [план и задачи Foundation](specs/001-foundation/plan.md);
+- [спецификация bilingual public shell](specs/002-design-bilingual-shell/spec.md);
+- [план и задачи bilingual public shell](specs/002-design-bilingual-shell/plan.md);
 - [аудит репозиториев и протоколов](docs/REPOSITORY_AUDIT.md);
 - [исходный single-host ADR](docs/adr/0001-mvp-architecture.md);
 - [действующий hybrid deployment ADR](docs/adr/0002-hybrid-vercel-deployment.md);
@@ -51,15 +54,30 @@ Protocols (VCP) используется как дополнительный л�
 
 Локальная разработка выполняется на Mac через `uv` и Colima. Публичный Django
 web/admin проектируется для Vercel; Preview создаются из PR, production — только
-из защищённой `main`. PostgreSQL будет внешним управляемым сервисом, но его
-production provisioning запрещён без отдельного подтверждения владельца.
+из защищённой `main`. Текущая оболочка database-free. Будущий PostgreSQL будет
+внешним управляемым сервисом, но его выбор и production provisioning запрещены
+без отдельного подтверждения владельца.
 
 Research worker, PyTorch и длительные эксперименты на Vercel не выполняются.
-После восстановления сервера worker размещается отдельно. Пока вычислительный
-узел недоступен, публичный сайт продолжает работать, а research operations
-возвращают явный unavailable status.
+Worker размещается отдельно только после самостоятельного этапа интеграции.
+Факт доступности сервера не означает готовность worker control plane. Пока
+интеграция не выполнена, публичный сайт продолжает работать и показывает
+`compute_node_unavailable`.
 
-## Локальный запуск Foundation
+## Локальный запуск публичной оболочки
+
+Оболочка не требует PostgreSQL, worker или JavaScript:
+
+```bash
+uv sync --locked --group dev
+uv run python manage.py runserver 127.0.0.1:8001
+```
+
+`/` перенаправляет на русский `/ru/`; английская версия доступна по `/en/`.
+Команды Python- и browser-проверок находятся в
+[quickstart этапа](specs/002-design-bilingual-shell/quickstart.md).
+
+## Локальный запуск Foundation stack
 
 Требуются Homebrew, `uv`, Colima, Docker CLI и Compose plugin. Системный
 `/usr/bin/python3` 3.9.6 не используется.

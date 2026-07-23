@@ -1,0 +1,15 @@
+<nav class="level-nav" aria-label="{{ ui.explanation_nav }}">
+  {% for level in method.explanations %}
+    <a href="#{{ level.key }}">{{ level.label }}</a>
+  {% endfor %}
+</nav>
+<div class="explanation-stack">
+  {% for level in method.explanations %}
+    <section class="explanation-level" id="{{ level.key }}" tabindex="-1">
+      <p class="eyebrow">{{ level.label }}</p>
+      <h2>{{ level.title }}</h2>
+      <p>{{ level.body }}</p>
+      <p class="availability">{{ level.note }}</p>
+    </section>
+  {% endfor %}
+</div>

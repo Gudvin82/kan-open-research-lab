@@ -14,9 +14,7 @@ def required(name: str) -> str:
 
 SECRET_KEY = required("DJANGO_SECRET_KEY")
 ALLOWED_HOSTS = [host.strip() for host in required("DJANGO_ALLOWED_HOSTS").split(",")]
-if not os.environ.get("DATABASE_URL"):
-    raise ImproperlyConfigured("Required setting is missing: DATABASE_URL")
-if os.environ.get("DATABASE_ENV") != "production":
+if os.environ.get("DATABASE_URL") and os.environ.get("DATABASE_ENV") != "production":
     raise ImproperlyConfigured(
         "Production DATABASE_URL requires DATABASE_ENV=production"
     )

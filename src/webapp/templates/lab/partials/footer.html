@@ -1,0 +1,34 @@
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <section class="footer-mission" aria-labelledby="footer-mission-title">
+      <p class="footer-kicker" id="footer-mission-title">{{ ui.site_short }}</p>
+      <p>{{ ui.mission }}</p>
+      <a class="text-link" href="https://github.com/Gudvin82/kan-open-research-lab">{{ ui.github }} <span aria-hidden="true">↗</span></a>
+    </section>
+    <nav aria-labelledby="footer-research">
+      <h2 id="footer-research">{{ ui.footer_research }}</h2>
+      <a href="{% url 'public:research' %}">{{ ui.research }}</a>
+      <a href="{% url 'public:methods' %}">{{ ui.methods }}</a>
+    </nav>
+    <nav aria-labelledby="footer-knowledge">
+      <h2 id="footer-knowledge">{{ ui.footer_knowledge }}</h2>
+      <a href="{% url 'public:knowledge' %}">{{ ui.knowledge }}</a>
+      {% for item in methods %}
+        <a href="{% url 'public:method-detail' method=item.slug %}">{{ item.short_title }}</a>
+      {% endfor %}
+    </nav>
+    <nav aria-labelledby="footer-project">
+      <h2 id="footer-project">{{ ui.footer_project }}</h2>
+      <a href="{% url 'public:about' %}">{{ ui.about }}</a>
+      {% include "lab/partials/language_switch.html" %}
+    </nav>
+  </div>
+  <div class="shell footer-bottom">
+    <p class="scientific-note">{{ ui.scientific_disclaimer }}</p>
+    <div class="compute-state">
+      <span>{{ ui.compute_label }}</span>
+      <code>{{ ui.compute_status }}</code>
+      <small>{{ ui.compute_note }}</small>
+    </div>
+  </div>
+</footer>

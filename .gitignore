@@ -17,6 +17,13 @@ venv/
 .mypy_cache/
 .coverage
 htmlcov/
+staticfiles/*
+!staticfiles/.gitkeep
+
+# Development-only browser tooling
+node_modules/
+.vercel/
+/public/
 
 # Local databases and runtime state
 *.sqlite3
