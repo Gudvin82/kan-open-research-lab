@@ -16,7 +16,15 @@ def run_python(
 ) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env.update(environment)
-    for name in ("DATABASE_URL", "DATABASE_ENV", "DJANGO_ALLOWED_HOSTS"):
+    for name in (
+        "DATABASE_URL",
+        "DATABASE_ENV",
+        "DJANGO_ALLOWED_HOSTS",
+        "PUBLIC_BASE_URL",
+        "VERCEL_ENV",
+        "VERCEL_URL",
+        "VERCEL_PROJECT_PRODUCTION_URL",
+    ):
         if name not in environment:
             env.pop(name, None)
     return subprocess.run(  # noqa: S603
@@ -155,6 +163,11 @@ def test_production_rejects_unknown_request_host_and_emits_noindex():
         (
             "import django; django.setup(); "
             "from django.test import Client; c=Client(); "
+            "import tempfile; "
+            "from django.conf import settings; "
+            "settings.STATIC_ROOT=tempfile.mkdtemp(); "
+            "from django.core.management import call_command; "
+            "call_command('collectstatic', verbosity=0, interactive=False); "
             "good=c.get('/ru/', "
             "HTTP_HOST='kan-open-research-immutable-test.vercel.app', "
             "HTTP_X_FORWARDED_PROTO='https'); "
@@ -181,6 +194,9 @@ def test_preview_without_database_keeps_liveness_only():
         }
     )
     env.pop("DATABASE_URL", None)
+    env.pop("PUBLIC_BASE_URL", None)
+    env.pop("VERCEL_URL", None)
+    env.pop("VERCEL_PROJECT_PRODUCTION_URL", None)
     result = subprocess.run(  # noqa: S603
         [
             sys.executable,
@@ -215,6 +231,9 @@ def test_preview_is_noindex_and_uses_security_headers_without_database():
     )
     env.pop("DATABASE_URL", None)
     env.pop("DATABASE_ENV", None)
+    env.pop("PUBLIC_BASE_URL", None)
+    env.pop("VERCEL_URL", None)
+    env.pop("VERCEL_PROJECT_PRODUCTION_URL", None)
     result = subprocess.run(  # noqa: S603
         [
             sys.executable,
