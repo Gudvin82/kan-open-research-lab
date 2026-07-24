@@ -1,10 +1,10 @@
 # Feature Specification: Vercel Production Release
 
-**Feature Branch**: `codex/003-vercel-production-release`
+**Feature Branch**: `codex/003-production-release-blockers`
 
 **Created**: 2026-07-24
 
-**Status**: Draft — planning checkpoint; Production is not authorized
+**Status**: Draft — release-blocker remediation; Production is not authorized
 
 **Input**: Prepare a controlled first Vercel Production release of the
 database-free bilingual Django shell after PR #4 was visually accepted and
@@ -136,6 +136,10 @@ rollback decision tree without moving aliases.
 - The Production alias differs from the immutable deployment URL.
 - The stable URL redirects through an unexpected host, producing incorrect
   canonical or `hreflang` values.
+- A permissive Vercel wildcard accepts a hostile sibling deployment hostname.
+- A request Host attempts to poison canonical or reciprocal `hreflang` output.
+- A Vercel host variable contains userinfo, a query, fragment, unsupported
+  scheme, malformed hostname, control character or ambiguous port.
 - Production inherits a Preview variable or Preview can read a
   Production-scoped variable.
 - Deployment is Ready but returns cold-start HTTP 500 or missing static assets.
@@ -228,6 +232,26 @@ rollback decision tree without moving aliases.
 - **FR-038**: If exact alias removal is unsupported for the active plan/domain
   type, Production MUST remain blocked until Deployment Protection or a
   reviewed maintenance/parking deployment is approved.
+- **FR-039**: Production `ALLOWED_HOSTS` MUST contain only exact, validated
+  hostnames derived from `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, an
+  optional `PUBLIC_BASE_URL`, and an optional strictly validated
+  `DJANGO_ALLOWED_HOSTS` extension.
+- **FR-040**: Production MUST NOT use `*`, `.vercel.app` or any other wildcard,
+  and MUST reject an unknown request Host with HTTP 400.
+- **FR-041**: Production host parsing MUST reject userinfo, query, fragment,
+  unsupported schemes, malformed hostnames and control characters, while
+  reducing accepted origins to an exact hostname without scheme, path or port.
+- **FR-042**: Production MUST fail closed unless the current immutable
+  `VERCEL_URL` and a stable canonical source are both valid.
+- **FR-043**: Canonical base selection MUST prefer a valid
+  `PUBLIC_BASE_URL`, then the HTTPS
+  `VERCEL_PROJECT_PRODUCTION_URL`; Production MUST NOT derive canonical data
+  from the request Host.
+- **FR-044**: Preview and Production MUST deny indexing by default through
+  both HTML robots metadata and `X-Robots-Tag`; enabling indexing requires a
+  later explicit owner decision and reviewed configuration.
+- **FR-045**: The blocker-remediation PR MUST create no Vercel environment
+  variable, deployment, alias, Git integration, database or worker mutation.
 
 ### Key Entities
 
@@ -267,6 +291,9 @@ rollback decision tree without moving aliases.
   results without secret values or raw internal logs.
 - **SC-009**: The rollback rehearsal identifies either one verified eligible
   prior deployment or the explicit absence of such a target before release.
+- **SC-010**: Automated Production simulation proves exact immutable/stable
+  allowlisting, hostile-host HTTP 400, stable RU/EN canonical metadata and
+  default `noindex, nofollow` without requiring `DJANGO_ALLOWED_HOSTS`.
 
 ## Assumptions
 

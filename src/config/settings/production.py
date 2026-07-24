@@ -2,6 +2,11 @@ import os
 
 from django.core.exceptions import ImproperlyConfigured
 
+from src.config.public_urls import (
+    normalize_public_base_url,
+    unique_hosts,
+)
+
 from .base import *  # noqa: F403
 
 
@@ -13,7 +18,40 @@ def required(name: str) -> str:
 
 
 SECRET_KEY = required("DJANGO_SECRET_KEY")
-ALLOWED_HOSTS = [host.strip() for host in required("DJANGO_ALLOWED_HOSTS").split(",")]
+
+immutable_url = os.environ.get("VERCEL_URL", "")
+stable_url = os.environ.get("PUBLIC_BASE_URL", "") or os.environ.get(
+    "VERCEL_PROJECT_PRODUCTION_URL", ""
+)
+if not immutable_url.strip() or not stable_url.strip():
+    raise ImproperlyConfigured(
+        "Production host configuration is missing: VERCEL_URL and either "
+        "PUBLIC_BASE_URL or VERCEL_PROJECT_PRODUCTION_URL are required"
+    )
+
+host_sources = [
+    ("VERCEL_URL", immutable_url),
+    (
+        "VERCEL_PROJECT_PRODUCTION_URL",
+        os.environ.get("VERCEL_PROJECT_PRODUCTION_URL", ""),
+    ),
+    ("PUBLIC_BASE_URL", os.environ.get("PUBLIC_BASE_URL", "")),
+]
+host_sources.extend(
+    ("DJANGO_ALLOWED_HOSTS", value)
+    for value in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+)
+ALLOWED_HOSTS = unique_hosts((source, value) for source, value in host_sources if value)
+PUBLIC_BASE_URL = normalize_public_base_url(
+    stable_url,
+    source=(
+        "PUBLIC_BASE_URL"
+        if os.environ.get("PUBLIC_BASE_URL", "").strip()
+        else "VERCEL_PROJECT_PRODUCTION_URL"
+    ),
+)
+PUBLIC_INDEXING_ENABLED = False
+
 if os.environ.get("DATABASE_URL") and os.environ.get("DATABASE_ENV") != "production":
     raise ImproperlyConfigured(
         "Production DATABASE_URL requires DATABASE_ENV=production"

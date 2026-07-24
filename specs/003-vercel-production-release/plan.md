@@ -1,6 +1,6 @@
 # Implementation Plan: Vercel Production Release
 
-**Branch**: `codex/003-vercel-production-release` | **Date**: 2026-07-24 |
+**Branch**: `codex/003-production-release-blockers` | **Date**: 2026-07-24 |
 **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from
@@ -14,8 +14,9 @@ The deployment uses `--skip-domain`, passes the complete acceptance suite
 through its immutable URL, and only then receives public traffic through an
 explicit promotion. Production and Preview environments remain isolated, no
 database or worker is introduced, indexing stays disabled, and Git-based
-automatic deployment stays off. This planning PR stops before every external
-mutation.
+automatic deployment stays off. This release-blocker PR implements only the
+fail-closed host, canonical and indexing contracts and stops before every
+external mutation.
 
 ## Technical Context
 
@@ -111,15 +112,17 @@ rehearsal
 
 ### Phase 2 — Separately authorized environment setup
 
-1. Generate a random Production-only `DJANGO_SECRET_KEY` locally without
-   printing or persisting it.
-2. Add only the minimum Production variables through the Vercel secret store:
-   `DJANGO_SECRET_KEY`, settings module/host values if required, and the
-   explicit indexing-disabled flag.
-3. Confirm no `DATABASE_URL`, database label, worker/server credential or
+1. After separate release authorization, generate a random Production-only
+   `DJANGO_SECRET_KEY` locally without printing or persisting it.
+2. Depend on Vercel-provided `VERCEL_URL` and
+   `VERCEL_PROJECT_PRODUCTION_URL`; do not create host or indexing environment
+   variables for the first release.
+3. Leave `PUBLIC_BASE_URL` and `DJANGO_ALLOWED_HOSTS` absent unless a later
+   reviewed exact-host use case requires them.
+4. Confirm no `DATABASE_URL`, database label, worker/server credential or
    Preview secret is in Production scope.
-4. Confirm Production variables are not available to Preview.
-5. Record variable names and scopes only.
+5. Confirm Production variables are not available to Preview.
+6. Record variable names and scopes only.
 
 ### Phase 3 — Staged Production deployment
 
@@ -215,9 +218,9 @@ tests/unit/test_settings.py
 docs/VERIFICATION.md
 ```
 
-**Structure Decision**: The planning PR adds documentation only. Any runtime or
-test changes discovered by the plan belong to a later reviewed release PR
-before Production authorization.
+**Structure Decision**: The accepted planning PR added documentation only.
+The separately reviewed blocker-remediation PR owns T005–T010 runtime and test
+changes and still stops before Production authorization or Vercel mutation.
 
 ## Planning Decisions
 
@@ -230,6 +233,12 @@ before Production authorization.
 - Verify the same immutable artifact through both immutable and stable URLs.
 - Do not enable automatic deployment as part of the first manual release.
 - Do not delete failed deployments; deployment history is audit evidence.
+- Build Production `ALLOWED_HOSTS` only from exact, validated origins; never
+  use `*` or `.vercel.app`.
+- Build canonical and `hreflang` from the stable configured HTTPS origin,
+  never from request Host.
+- Keep indexing deny-by-default in application configuration; do not create an
+  environment toggle during blocker remediation or the first release.
 
 ## Resolved Containment Decision
 

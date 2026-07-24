@@ -256,3 +256,96 @@ appended.
   documents and public email are intentionally absent.
 - Production deployment, GitHub–Vercel auto-deploy, custom domain, database and
   worker integration remain intentionally unverified and separately gated.
+
+---
+
+# Production Release Blocker Remediation
+
+**Date:** 2026-07-24
+
+**Branch:** `codex/003-production-release-blockers`
+
+**Base commit:** `a1f69fe1dfe37dd30f9bb7deda6720289811a7ef`
+
+**Scope:** T005–T010 only. The earlier Production authorization for the base
+commit is revoked. No Vercel environment, secret, deployment, alias, domain,
+Git integration, database or worker state was changed.
+
+## Security contracts
+
+Production host configuration now:
+
+1. requires the exact current immutable hostname from `VERCEL_URL`;
+2. selects the canonical base from a validated `PUBLIC_BASE_URL`, otherwise
+   from `VERCEL_PROJECT_PRODUCTION_URL`;
+3. adds only exact validated hostnames from those sources;
+4. accepts `DJANGO_ALLOWED_HOSTS` only as an optional, strictly validated
+   exact-host extension;
+5. strips accepted scheme, path and port before allowlisting;
+6. rejects wildcard, userinfo, query, fragment, unsupported scheme, malformed
+   hostname, control characters and ambiguous ports;
+7. fails closed when the immutable or stable Production host is absent.
+
+Neither `*` nor `.vercel.app` is present in the allowlist. An arbitrary sibling
+such as `evil.vercel.app` receives HTTP 400.
+
+Canonical and reciprocal RU/EN `hreflang` values use the stable configured
+HTTPS origin and never `request.get_host()` or the immutable staged hostname.
+For the first release this resolves to
+`https://kan-open-research-lab.vercel.app`.
+
+Indexing control is no longer Preview-specific. Preview and Production both
+emit HTML `noindex, nofollow` and the matching `X-Robots-Tag` by default.
+There is no environment mutation or first-release toggle that enables
+indexing.
+
+## Test-first evidence
+
+The new Production contracts were added as failing tests before the
+implementation. The initial targeted run failed in eight expected places:
+mandatory legacy `DJANGO_ALLOWED_HOSTS`, wildcard acceptance, missing
+Production robots controls and request-Host-derived canonical metadata. The
+same targeted suite passed after implementation.
+
+## Local gates
+
+| Check | Result |
+|---|---|
+| `ruff format --check .` | PASS, 38 files |
+| `ruff check .` | PASS |
+| `mypy src` | PASS, 24 source files |
+| full `pytest` | PASS, 88 tests |
+| Production `check --deploy --fail-level WARNING` with an ephemeral random test secret | PASS |
+| Production `makemigrations --check --dry-run` | PASS, no changes |
+| `pip-audit` | PASS, no known vulnerabilities |
+| `npm audit --audit-level=high` | PASS, 0 vulnerabilities |
+| Playwright/axe | PASS, 24/24 |
+| worker lock check | PASS |
+| Gitleaks Git history | PASS, 10 commits |
+| Gitleaks intended tracked diff and new source | PASS, no leaks |
+
+Blocker-scope Spec Kit convergence checked 10 relevant functional
+requirements, two measurable success criteria, three plan decisions and
+Constitution principles V, VII and VIII. It found zero missing, partial,
+contradictory or unrequested gaps for T005–T010, so no convergence tasks were
+appended. T011+ remain intentionally gated release execution, not gaps in this
+PR.
+
+The Production simulation used `VERCEL_ENV=production`, the test-only exact
+immutable hostname
+`kan-open-research-immutable-test.vercel.app`, stable hostname
+`kan-open-research-lab.vercel.app`, no `DJANGO_ALLOWED_HOSTS`, no database
+variables and an ephemeral random secret held only for the command lifetime.
+Its value was neither printed nor written.
+
+A raw scan of the entire local working directory correctly detected an ignored
+provider credential inside `.vercel/`. No value was displayed or copied. The
+directory remains excluded from Git; history, intended diff and new-source
+scans are clean.
+
+## Remaining gates
+
+- GitHub `governance`, `python`, `secrets` and `ui` results belong to the draft
+  blocker-remediation PR and must be green before merge.
+- Production secret creation, staged deployment, promotion and evidence remain
+  T011+ and require a new owner authorization for the future merged SHA.

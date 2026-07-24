@@ -21,17 +21,19 @@ remain forbidden until the owner gives a separate Production authorization.
 
 ## Phase 2: Foundational release contracts
 
-- [ ] T005 [P] Add a fail-closed Production `noindex, nofollow` setting in
-  `src/config/settings/production.py`
-- [ ] T006 [P] Add Production noindex/header behavior in
+- [x] T005 [P] Add exact validated Vercel Production hosts, stable canonical
+  base selection and fail-closed `noindex, nofollow` settings in
+  `src/config/settings/production.py` and `src/config/public_urls.py`
+- [x] T006 [P] Replace Preview-specific robots handling with deny-by-default
+  Preview/Production indexing behavior in
   `src/webapp/middleware.py`
-- [ ] T007 [P] Extend Production environment-isolation and migration-free
+- [x] T007 [P] Extend Production environment-isolation and migration-free
   contracts in `tests/contract/test_vercel_config.py`
-- [ ] T008 [P] Add Production settings tests for secret, hosts, `DEBUG=False`,
+- [x] T008 [P] Add Production settings tests for secret, hosts, `DEBUG=False`,
   noindex and database labels in `tests/unit/test_settings.py`
-- [ ] T009 Validate staged-deployment canonical/`hreflang` behavior for the
+- [x] T009 Validate staged-deployment canonical/`hreflang` behavior for the
   stable Production host in `tests/contract/test_public_routes.py`
-- [ ] T010 Run local Python, Django, dependency, UI and secret checks and
+- [x] T010 Run local Python, Django, dependency, UI and secret checks and
   record pre-deployment results in `docs/VERIFICATION.md`
 
 **Checkpoint:** The accepted shell is release-safe before any Vercel mutation.
