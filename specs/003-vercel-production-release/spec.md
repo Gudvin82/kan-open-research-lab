@@ -4,7 +4,7 @@
 
 **Created**: 2026-07-24
 
-**Status**: Draft — release-blocker remediation; Production is not authorized
+**Status**: Released — controlled database-free Production published 2026-07-29
 
 **Input**: Prepare a controlled first Vercel Production release of the
 database-free bilingual Django shell after PR #4 was visually accepted and

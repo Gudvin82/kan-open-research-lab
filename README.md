@@ -4,8 +4,8 @@
 образовательной лаборатории KAN/MLP/PINN.
 
 Статус: **Foundation и Design System + Bilingual Public Shell приняты;
-Production release находится на отдельном planning checkpoint и не
-авторизован**.
+database-free Production опубликован на Vercel и остаётся `noindex` до
+отдельного решения владельца**.
 
 **Основной репозиторий:** <https://github.com/Gudvin82/kan-open-research-lab>
 
@@ -118,5 +118,5 @@ docker compose -f compose.yaml -f compose.worker.yaml up --build --detach worker
 - политика аналитики/cookie;
 - внешнее backup-хранилище и сроки хранения артефактов.
 - конкретный managed PostgreSQL и object storage;
-- Production deployment, GitHub–Vercel auto-deploy, постоянный домен и любые
+- GitHub–Vercel auto-deploy, постоянный домен, включение индексации и любые
   платные ресурсы.

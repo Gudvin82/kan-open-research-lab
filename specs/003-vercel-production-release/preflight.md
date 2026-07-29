@@ -1,11 +1,15 @@
 # Vercel Production Capability Preflight
 
-**Checked:** 2026-07-24
+**Checked:** 2026-07-24; revalidated and executed 2026-07-29
 
 **Mode:** Read-only. No Production environment, secret, deployment, alias,
 domain, Git integration or project setting was created or changed.
 
-## Current project facts
+The statement above describes the planning checkpoint. The separately
+authorized release later completed; final evidence is in
+`docs/VERIFICATION.md`.
+
+## Project facts at the planning checkpoint
 
 | Field | Verified value |
 |---|---|
@@ -95,3 +99,19 @@ Before separate Production authorization:
 7. record command shapes without credentials;
 8. confirm Production `noindex, nofollow` implementation and tests;
 9. create no Production secret until the owner authorizes the release stage.
+
+## Release execution addendum
+
+The release revalidated local Vercel CLI `53.3.2`, the Hobby scope,
+project/team identity, absent Git link, exact stable alias and supported
+stage/promote/alias-removal command shapes.
+
+Production source SHA
+`5939d25ac40dd9e9320dcafab735d53725944e5e` was deployed with explicit
+`--prod --skip-domain` as `dpl_3ExyTTVtnEVwgu5x3HcBsBegE3mD`. The stable
+`kan-open-research-lab.vercel.app` alias was unassigned during immutable
+verification and was promoted only after every gate passed. It now points to
+that verified deployment.
+
+No database, worker, migration, custom domain, Git integration, automatic
+deployment or paid resource was added.

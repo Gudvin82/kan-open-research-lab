@@ -1,8 +1,7 @@
 # Rollback Plan: First Vercel Production Release
 
-**Status**: Draft rehearsal plan; executing rollback or containment requires
-separate owner authorization unless an already-authorized release is actively
-failing its blocking checks.
+**Status**: Rehearsed and retained for future releases. The first controlled
+release succeeded without containment or rollback.
 
 ## Objective
 
@@ -119,6 +118,21 @@ First-release containment procedure:
 If preflight cannot prove that the exact alias is safely removable on the
 active plan/domain type, do not deploy. Report the available alternative:
 Deployment Protection or a separately reviewed maintenance/parking deployment.
+
+## Current known-good Production baseline
+
+After the successful 2026-07-29 release, future releases have one verified
+rollback candidate:
+
+- deployment ID: `dpl_3ExyTTVtnEVwgu5x3HcBsBegE3mD`;
+- source SHA: `5939d25ac40dd9e9320dcafab735d53725944e5e`;
+- immutable URL:
+  `https://kan-open-research-aartziwfe-gudvin82s-projects.vercel.app`;
+- stable alias: `https://kan-open-research-lab.vercel.app`;
+- state at verification: Production / Ready / `iad1`.
+
+Future rollback must re-inspect this deployment before use and repeat the
+critical public checks after any alias movement.
 
 ## Stop conditions
 

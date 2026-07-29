@@ -58,3 +58,30 @@ Formal post-implementation `/speckit-converge` remains T034 because the
 official command is append-only and is designed to run after
 `/speckit-implement`. Running it before the separately authorized release would
 incorrectly classify the intentionally unexecuted Production work as missing.
+
+---
+
+## Post-release convergence — 2026-07-29
+
+The completed release was reconciled against the current specification, plan,
+tasks, checklist, rollback plan, constitution and runtime evidence.
+
+- T001–T035 are resolved. Conditional containment tasks T028, T029 and T031
+  were evaluated as not triggered because the promoted release stayed healthy.
+- CHK001–CHK078 are resolved; CHK068 and CHK078 record the same non-triggered
+  outcome rather than claiming a destructive rollback rehearsal.
+- The released artifact is exact protected-`main` SHA
+  `5939d25ac40dd9e9320dcafab735d53725944e5e`.
+- Staged deployment, immutable verification and promotion remained distinct
+  operations.
+- Production is public and Preview remains authentication-protected.
+- `noindex`, exact hosts, stable canonical/`hreflang`, security headers,
+  database-free readiness and `compute_node_unavailable` match the spec.
+- Local and GitHub quality gates passed, followed by two 24/24 Production
+  Playwright/axe runs and redacted runtime-log verification.
+- No database, worker, migration, custom domain, paid resource, Git integration
+  or automatic deployment was introduced.
+
+No missing, contradictory or unrequested release requirement remains. Future
+indexing, permanent domain, database, worker and auto-deploy work each retains
+its own owner approval gate.
