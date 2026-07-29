@@ -34,7 +34,9 @@ jobs:
       DATABASE_URL: postgresql://kan_ci:ci-only@127.0.0.1:5432/kan_ci
       DATABASE_ENV: production
       DJANGO_SECRET_KEY: ci-only-7f9a4d2c8e1b6a3f5d0c9e7b2a4f8d1c6e3b5a9f0d7c2e4b8a1f6d3c9e5b7a2f
-      DJANGO_ALLOWED_HOSTS: ci.invalid
+      VERCEL_ENV: production
+      VERCEL_URL: ci-immutable.vercel.app
+      VERCEL_PROJECT_PRODUCTION_URL: ci-production.vercel.app
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065

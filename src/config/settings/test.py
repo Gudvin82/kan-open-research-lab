@@ -2,6 +2,7 @@ from .base import *  # noqa: F403
 
 SECRET_KEY = "test-only-not-a-secret"  # noqa: S105
 DEBUG = False
+PUBLIC_BASE_URL = "http://testserver"
 ALLOWED_HOSTS = ["testserver"]
 DATABASES = {
     "default": {

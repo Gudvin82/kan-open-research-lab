@@ -67,3 +67,21 @@ def test_vercel_configuration_contains_no_database_or_worker_secret():
     assert "postgresql://" not in inspected
     assert "kan_worker" not in inspected
     assert "research_engine/src" not in inspected
+
+
+def test_production_runtime_contract_is_host_exact_and_indexing_disabled():
+    production = Path("src/config/settings/production.py").read_text()
+    public_urls = Path("src/config/public_urls.py").read_text()
+    middleware = Path("src/webapp/middleware.py").read_text()
+
+    assert "VERCEL_URL" in production
+    assert "VERCEL_PROJECT_PRODUCTION_URL" in production
+    assert "PUBLIC_BASE_URL" in production
+    assert "PUBLIC_INDEXING_ENABLED = False" in production
+    assert 'required("DJANGO_ALLOWED_HOSTS")' not in production
+    assert "exact hostname required" in public_urls
+    assert 'response.headers["X-Robots-Tag"] = "noindex, nofollow"' in middleware
+
+    runtime_contract = "\n".join((production, public_urls, middleware))
+    assert "migrate" not in runtime_contract.lower()
+    assert "kan_worker" not in runtime_contract

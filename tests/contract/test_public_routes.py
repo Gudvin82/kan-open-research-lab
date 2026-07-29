@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 import pytest
-from django.test import Client
+from django.test import Client, override_settings
 
 PRIMARY_PATHS = (
     "",
@@ -81,3 +81,35 @@ def test_not_found_page_is_localized(client: Client, locale: str, title: str) ->
     assert f'<html lang="{locale}"' in html
     assert f"<h1>{title}</h1>" in html
     assert f'href="/{locale}/"' in html
+
+
+@override_settings(
+    PUBLIC_BASE_URL="https://kan-open-research-lab.vercel.app",
+    ALLOWED_HOSTS=[
+        "testserver",
+        "kan-open-research-immutable-test.vercel.app",
+    ],
+)
+@pytest.mark.parametrize("locale", ("ru", "en"))
+def test_canonical_and_hreflang_use_stable_base_not_request_host(
+    client: Client, locale: str
+) -> None:
+    response = client.get(
+        f"/{locale}/research/",
+        HTTP_HOST="kan-open-research-immutable-test.vercel.app",
+    )
+    html = response.content.decode()
+
+    assert (
+        '<link rel="canonical" '
+        f'href="https://kan-open-research-lab.vercel.app/{locale}/research/">'
+    ) in html
+    assert (
+        '<link rel="alternate" hreflang="ru" '
+        'href="https://kan-open-research-lab.vercel.app/ru/research/">'
+    ) in html
+    assert (
+        '<link rel="alternate" hreflang="en" '
+        'href="https://kan-open-research-lab.vercel.app/en/research/">'
+    ) in html
+    assert "kan-open-research-immutable-test.vercel.app" not in html
