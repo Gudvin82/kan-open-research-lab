@@ -246,7 +246,7 @@ appended.
 - Cold/warm sampled time-to-first-byte was about 0.33–0.74 seconds during the
   verification window; this is evidence from one region, not an SLA.
 
-## Known limitations
+## Known limitations at the Preview checkpoint
 
 - Demonstration research entries are reviewable static fixtures, not published
   experimental results.
@@ -254,8 +254,9 @@ appended.
   editorial translation workflow exists yet.
 - Publication models, search, admin editorial workflow, analytics, legal
   documents and public email are intentionally absent.
-- Production deployment, GitHub–Vercel auto-deploy, custom domain, database and
-  worker integration remain intentionally unverified and separately gated.
+- At this checkpoint Production deployment, GitHub–Vercel auto-deploy, custom
+  domain, database and worker integration were still separately gated. The
+  later Production section supersedes only the deployment item.
 
 ---
 
@@ -343,9 +344,145 @@ provider credential inside `.vercel/`. No value was displayed or copied. The
 directory remains excluded from Git; history, intended diff and new-source
 scans are clean.
 
-## Remaining gates
+## Remaining gates at the blocker-remediation checkpoint
 
 - GitHub `governance`, `python`, `secrets` and `ui` results belong to the draft
   blocker-remediation PR and must be green before merge.
 - Production secret creation, staged deployment, promotion and evidence remain
   T011+ and require a new owner authorization for the future merged SHA.
+
+These historical gates were subsequently authorized and completed in the
+Production section below.
+
+---
+
+# First Controlled Vercel Production Release
+
+**Release window:** 2026-07-29 13:26–13:38 UTC
+
+**Released source SHA:** `5939d25ac40dd9e9320dcafab735d53725944e5e`
+
+**Hotfix PR:** [#7](https://github.com/Gudvin82/kan-open-research-lab/pull/7)
+
+**Deployment ID:** `dpl_3ExyTTVtnEVwgu5x3HcBsBegE3mD`
+
+**Immutable deployment URL:**
+<https://kan-open-research-aartziwfe-gudvin82s-projects.vercel.app>
+
+**Public Production URL:**
+<https://kan-open-research-lab.vercel.app>
+
+**Target/state/region:** Production / Ready / `iad1`
+
+**CLI:** local Vercel CLI `53.3.2`; remote build reported Vercel CLI `58.1.0`
+
+## Source and CI gate
+
+Local `main`, `origin/main` and release `HEAD` were clean and identical at the
+full SHA above. The merge-commit checks completed successfully:
+
+- [Governance](https://github.com/Gudvin82/kan-open-research-lab/actions/runs/30456007047);
+- [quality: python, secrets and ui](https://github.com/Gudvin82/kan-open-research-lab/actions/runs/30456011027).
+
+The merged hotfix addresses the first staged deployment
+`dpl_4vU1rtCGiHiSGkNSEVRevcV6Ev94`, which was Ready but returned HTTP 500 for
+template pages because the Python Function attempted to read a build-only
+staticfiles manifest. That deployment was never promoted to the stable alias
+and remains intact as audit evidence. The fix makes Vercel Production runtime
+generate unhashed `/static/` URLs while Vercel serves the collected
+`public/static` output at the edge. A regression test proves that HTML renders
+without a runtime manifest.
+
+## Environment and release controls
+
+The Production environment contains one application variable name:
+`DJANGO_SECRET_KEY`, encrypted and scoped only to Production. Its value was
+never displayed, logged, persisted in project files or committed. `DEBUG=False`
+is enforced by settings.
+
+Production contains no `DATABASE_URL`, database label, PostgreSQL credential,
+worker/server credential or Preview application secret. No database, worker,
+storage, custom domain, paid resource, migration, Git integration or automatic
+deployment was created or enabled.
+
+The staged command used explicit `--prod --skip-domain`. Before promotion:
+
+- deployment metadata reported source SHA
+  `5939d25ac40dd9e9320dcafab735d53725944e5e`, ref `main`, target Production,
+  state Ready and ID `dpl_3ExyTTVtnEVwgu5x3HcBsBegE3mD`;
+- `kan-open-research-lab.vercel.app` returned Vercel
+  `DEPLOYMENT_NOT_FOUND`, proving the stable alias was unassigned;
+- Vercel still assigned generated team/project aliases despite
+  `--skip-domain`; none was used as the stable release target.
+
+Promotion was a separate explicit operation on the already verified immutable
+deployment. No rebuild occurred. The stable alias now resolves to the same
+deployment ID and source SHA.
+
+## Immutable and public runtime verification
+
+The same route matrix was run before and after promotion:
+
+| Boundary | Expected | Immutable | Public alias |
+|---|---:|---:|---:|
+| `/` | 302 to `/ru/` | PASS | PASS |
+| RU/EN home, research, methods, knowledge and about | HTTP 200 | PASS | PASS |
+| RU/EN KAN, MLP, PINN and comparison | HTTP 200 | PASS | PASS |
+| localized RU/EN 404 | HTTP 404 | PASS | PASS |
+| CSS and Golos Text WOFF2 | HTTP 200 | PASS | PASS |
+| `/health/live/` | HTTP 200 | PASS | PASS |
+| `/health/ready/` | HTTP 503 `database_unavailable` | PASS | PASS |
+| compute status | HTTP 503 `compute_node_unavailable` | PASS | PASS |
+
+Canonical and reciprocal RU/EN `hreflang` consistently use
+`https://kan-open-research-lab.vercel.app`, never the immutable hostname or
+request Host. HTML meta robots and `X-Robots-Tag` remain
+`noindex, nofollow`.
+
+HSTS with preload/includeSubDomains, `X-Content-Type-Options: nosniff`,
+`X-Frame-Options: DENY`, referrer policy and cross-origin opener policy were
+present. Public HTML and headers contained no deployment hostname poisoning,
+secret name/value, database URL, PostgreSQL connection string, migration
+command or worker credential.
+
+Playwright/axe passed **24/24** twice:
+
+1. against the protected immutable deployment through a temporary local
+   authenticated transport that retained the real deployment responses;
+2. directly and anonymously against the public stable Production URL.
+
+The suite covers RU/EN accessibility, same-entity language switching,
+keyboard focus, no-JavaScript navigation, forced colors, reduced motion,
+320/1440 px layouts and 200% zoom. It reported no critical or serious axe
+violations. The temporary authenticated transport and its files were not
+committed.
+
+Two public RU samples completed in approximately 0.264 and 0.252 seconds.
+These are release-window observations, not an SLA.
+
+## Runtime logs and isolation
+
+The final redacted aggregate covered 300 Production runtime records:
+
+- HTTP 200: 276;
+- HTTP 404: 12, from intentional localized 404 probes;
+- HTTP 503: 12, from intentional readiness and compute-unavailable probes;
+- HTTP 500: 0;
+- error/fatal records: 0;
+- secret, migration, PostgreSQL, worker/server term matches: 0.
+
+Raw logs, cookies, request dumps, provider credentials and environment values
+are not included in Git or this evidence.
+
+The accepted Preview remains protected by Vercel Authentication while the
+stable Production URL is anonymously accessible. Production remains
+`noindex`; GitHub–Vercel auto-deploy, permanent domain, indexing, PostgreSQL
+and worker integration remain separate owner gates.
+
+## Release outcome
+
+All blocking release checks passed. Containment and rollback were not
+triggered. The failed historical Production attempt
+`dpl_DRbR6AZwZ29MMk4SH66xzeLa5A1z`, the unpromoted manifest-failure deployment
+`dpl_4vU1rtCGiHiSGkNSEVRevcV6Ev94`, Preview, deployment logs and project
+history remain available as audit evidence.
