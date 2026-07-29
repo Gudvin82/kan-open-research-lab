@@ -52,6 +52,22 @@ PUBLIC_BASE_URL = normalize_public_base_url(
 )
 PUBLIC_INDEXING_ENABLED = False
 
+# Vercel serves the build output from ``public/static`` at the edge. The Python
+# function does not receive that collectstatic manifest, so runtime URL
+# generation must not depend on reading it from ``/var/task/staticfiles``.
+if os.environ.get("VERCEL_ENV") == "production":
+    STORAGES = {  # noqa: F405
+        **STORAGES,  # noqa: F405
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        },
+    }
+    MIDDLEWARE = [  # noqa: F405
+        middleware
+        for middleware in MIDDLEWARE  # noqa: F405
+        if middleware != "whitenoise.middleware.WhiteNoiseMiddleware"
+    ]
+
 if os.environ.get("DATABASE_URL") and os.environ.get("DATABASE_ENV") != "production":
     raise ImproperlyConfigured(
         "Production DATABASE_URL requires DATABASE_ENV=production"

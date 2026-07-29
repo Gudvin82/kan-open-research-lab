@@ -317,3 +317,22 @@ def test_production_without_database_serves_public_shell():
         PRODUCTION_ENV,
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_vercel_production_runtime_renders_without_collectstatic_manifest():
+    result = run_python(
+        (
+            "import django, tempfile; django.setup(); "
+            "from django.conf import settings; "
+            "settings.STATIC_ROOT=tempfile.mkdtemp(); "
+            "from django.test import Client; c=Client(); "
+            "r=c.get('/ru/', "
+            "HTTP_HOST='kan-open-research-immutable-test.vercel.app', "
+            "HTTP_X_FORWARDED_PROTO='https'); "
+            "assert r.status_code == 200; "
+            "assert b'/static/public/css/site.css' in r.content"
+        ),
+        PRODUCTION_ENV,
+    )
+
+    assert result.returncode == 0, result.stderr
