@@ -85,3 +85,13 @@ def test_production_runtime_contract_is_host_exact_and_indexing_disabled():
     runtime_contract = "\n".join((production, public_urls, middleware))
     assert "migrate" not in runtime_contract.lower()
     assert "kan_worker" not in runtime_contract
+
+
+def test_vercel_runtime_does_not_require_build_only_static_manifest():
+    production = Path("src/config/settings/production.py").read_text()
+    build = Path("src/config/settings/build.py").read_text()
+
+    assert "django.contrib.staticfiles.storage.StaticFilesStorage" in production
+    assert "whitenoise.middleware.WhiteNoiseMiddleware" in production
+    assert "public" in build
+    assert "static" in build
